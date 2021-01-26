@@ -1,6 +1,7 @@
 project(PLoc_Modeling)
 
 set(HEADERS
+        Report.h
         )
 
 set(EXECUTABLE
