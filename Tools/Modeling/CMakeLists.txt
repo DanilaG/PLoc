@@ -1,6 +1,7 @@
 project(PLoc_Modeling)
 
 set(HEADERS
+        Experiment.h
         Report.h
         )
 
