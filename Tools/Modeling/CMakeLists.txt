@@ -19,7 +19,7 @@ if(NOT cxxopts_POPULATED)
     include_directories(${cxxopts_SOURCE_DIR}/include)
 endif()
 
-include_directories(../Src)
-include_directories(../Src/Structures)
+include_directories(../../Src)
+include_directories(../../Src/Structures)
 
 add_executable(${PROJECT_NAME} ${HEADERS} ${EXECUTABLE})
