@@ -10,6 +10,16 @@ public:
     virtual ~Measurer() {}
 };
 
+class DistMeasurer: public Measurer {
+public:
+    DistMeasurer() {}
+};
+
+class TimeMeasurer: public Measurer {
+public:
+    TimeMeasurer() {}
+};
+
 /** Descript of a report */
 struct ReportDescription {
     /** All measurers needed in report */
