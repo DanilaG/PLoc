@@ -10,13 +10,13 @@
 /** Describe experiment field */
 struct Field {
     /** Min value of x and y coordinates the field */
-    Point<> min;
+    pl::Point<> min;
 
     /** Max value of x and y coordinates the field */
-    Point<> max;
+    pl::Point<> max;
 
     /** Positions of all detectors */
-    std::vector<Point<>> detectors;
+    std::vector<pl::Point<>> detectors;
 };
 
 /** Protocol for random error generator */
