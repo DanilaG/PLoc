@@ -27,6 +27,9 @@ struct ReportDescription {
 
     /** True, if need create a text description of a experiment */
     bool useTextDescription;
+
+    /** Path for output files */
+    std::string outPath = "";
 };
 
 #endif //PLOC_REPORT_H
