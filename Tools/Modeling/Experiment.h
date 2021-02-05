@@ -19,22 +19,32 @@ struct Field {
     std::vector<pl::Point<>> detectors;
 };
 
-/** Protocol for random error generator */
-class RandomGenerator {
+class ErrorGeneratorDescription {
 public:
-    /** Name of generator */
-    const std::string name;
+    enum class GeneratorType: unsigned int {
+        Linear,
+        Normal
+    };
 
-    /** Get description the generator */
-    virtual std::string toString() = 0;
+    ErrorGeneratorDescription(GeneratorType generationType): generationType(generationType) {}
 
-    /** Get random error */
-    virtual double get_error() = 0;
+    const GeneratorType generationType;
+};
 
-    /** Get random error */
-    double operator()() {};
+class LinearErrorGeneratorDescription: public ErrorGeneratorDescription {
+public:
+    LinearErrorGeneratorDescription(): ErrorGeneratorDescription(GeneratorType::Linear) {}
 
-    virtual ~RandomGenerator() {};
+    double minValue;
+    double maxValue;
+};
+
+class NormalErrorGeneratorDescription: public ErrorGeneratorDescription {
+public:
+    NormalErrorGeneratorDescription(): ErrorGeneratorDescription(GeneratorType::Normal) {}
+
+    double mean;
+    double standardDeviation;
 };
 
 /** Descript of a experiment */
@@ -66,11 +76,14 @@ struct ExperimentDescription {
     /** Number of attempts experiments in each node */
     unsigned int numberAttemptsInNode;
 
-    std::unique_ptr<RandomGenerator> cErrorGenerator;
-    std::unique_ptr<RandomGenerator> timeErrorGenerator;
+    std::shared_ptr<ErrorGeneratorDescription> cErrorGenerator;
+    std::shared_ptr<ErrorGeneratorDescription> timeErrorGenerator;
 
     LocalizationAlgoType algoType;
     CombinerType combinerType;
 };
+
+/** Load experiment description from Json. May throw an exception */
+ExperimentDescription loadExperimentDescriptionFromJson(const std::string filePath);
 
 #endif //PLOC_EXPERIMENT_H
