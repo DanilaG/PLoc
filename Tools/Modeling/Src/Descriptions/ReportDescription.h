@@ -1,13 +1,13 @@
-#ifndef PLOC_REPORT_H
-#define PLOC_REPORT_H
+#ifndef PLOC_REPORTDESCRIPTION_H
+#define PLOC_REPORTDESCRIPTION_H
 
 #include <memory>
 #include <list>
 
-/** Descript of a report */
+/** Description of a report */
 struct ReportDescription {
     enum class Measurer {
-        Time ,
+        Time,
         Dist
     };
 
@@ -21,4 +21,4 @@ struct ReportDescription {
     std::string outPath = "";
 };
 
-#endif //PLOC_REPORT_H
+#endif //PLOC_REPORTDESCRIPTION_H

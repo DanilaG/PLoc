@@ -1,15 +1,17 @@
 project(PLoc_Modeling)
 
 set(HEADERS
-        Experiment.h
-        OptionParser.h
-        Report.h
+        Descriptions/ExperimentDescription.h
+        Descriptions/ReportDescription.h
+        Parsers/ExperimentJsonParser.h
+        Parsers/OptionParser.h
         )
 
 set(EXECUTABLE
         main.cpp
-        OptionParser.cpp
-        Experiment.cpp)
+        Parsers/ExperimentJsonParse.cpp
+        Parsers/OptionParser.cpp
+        )
 
 FetchContent_Declare(
         cxxopts
@@ -41,8 +43,12 @@ if(NOT magic_enum_POPULATED)
     include_directories(${magic_enum_SOURCE_DIR}/include)
 endif()
 
-include_directories(../../Src)
-include_directories(../../Src/Structures)
+include_directories(
+        ../../../Src
+        ../../../Src/Structures
+        Descriptions
+        Parsers
+        )
 
 add_executable(${PROJECT_NAME} ${HEADERS} ${EXECUTABLE})
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)

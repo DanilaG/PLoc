@@ -1,8 +1,7 @@
-#ifndef PLOC_EXPERIMENT_H
-#define PLOC_EXPERIMENT_H
+#ifndef PLOC_EXPERIMENTDESCRIPTION_H
+#define PLOC_EXPERIMENTDESCRIPTION_H
 
 #include <memory>
-#include <string>
 #include <vector>
 
 #include <Geometric/Points/Point.h>
@@ -19,6 +18,7 @@ struct Field {
     std::vector<pl::Point<>> detectors;
 };
 
+/** Description of random error generator */
 class ErrorGeneratorDescription {
 public:
     enum class GeneratorType: unsigned int {
@@ -28,22 +28,29 @@ public:
 
     ErrorGeneratorDescription(GeneratorType generationType): generationType(generationType) {}
 
+    /** Type of generator */
     const GeneratorType generationType;
 };
 
+/** Linear generator */
 class LinearErrorGeneratorDescription: public ErrorGeneratorDescription {
 public:
     LinearErrorGeneratorDescription(): ErrorGeneratorDescription(GeneratorType::Linear) {}
 
+    /** Min return value */
     double minValue;
+    /** Max return value */
     double maxValue;
 };
 
+/** Normal generator */
 class NormalErrorGeneratorDescription: public ErrorGeneratorDescription {
 public:
     NormalErrorGeneratorDescription(): ErrorGeneratorDescription(GeneratorType::Normal) {}
 
+    /** Mean of a normal distribution */
     double mean;
+    /** Standard deviation of a normal distribution */
     double standardDeviation;
 };
 
@@ -83,7 +90,4 @@ struct ExperimentDescription {
     CombinerType combinerType;
 };
 
-/** Load experiment description from Json. May throw an exception */
-ExperimentDescription loadExperimentDescriptionFromJson(const std::string filePath);
-
-#endif //PLOC_EXPERIMENT_H
+#endif //PLOC_EXPERIMENTDESCRIPTION_H
