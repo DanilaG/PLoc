@@ -26,10 +26,10 @@ public:
         Normal
     };
 
-    ErrorGeneratorDescription(GeneratorType generationType): generationType(generationType) {}
+    ErrorGeneratorDescription(GeneratorType generationType): generatorType(generationType) {}
 
     /** Type of generator */
-    const GeneratorType generationType;
+    const GeneratorType generatorType;
 };
 
 /** Linear generator */
