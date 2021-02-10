@@ -3,6 +3,10 @@ project(PLoc_Modeling)
 set(HEADERS
         Descriptions/ExperimentDescription.h
         Descriptions/ReportDescription.h
+        Executor/ErrorGenerators.h
+        Executor/Executor.h
+        Executor/ExperimentResult.h
+        Executor/Factories.h
         Parsers/ExperimentJsonParser.h
         Parsers/OptionParser.h
         )
@@ -11,6 +15,8 @@ set(EXECUTABLE
         main.cpp
         Parsers/ExperimentJsonParse.cpp
         Parsers/OptionParser.cpp
+        Executor/Executor.cpp
+        Executor/Factories.cpp
         )
 
 FetchContent_Declare(
@@ -51,4 +57,4 @@ include_directories(
         )
 
 add_executable(${PROJECT_NAME} ${HEADERS} ${EXECUTABLE})
-target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
+target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json PLoc)
