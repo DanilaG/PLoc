@@ -51,8 +51,11 @@ class ExperimentResult {
 public:
     ExperimentResult(const GridResult::Size& size) : distance(size), time(size) {}
 
+    /** Results */
     GridResult distance;
     GridResult time;
+
+    /** Duration of all calculates in milliseconds */
     double duration;
 };
 
