@@ -66,7 +66,7 @@ std::optional<TimePoint<>> executeLocalization(const std::vector<TimePoint<>>& d
 template <unsigned int K, class F>
 std::optional<TimePoint<>> localization(const std::vector<TimePoint<>>& data,
                          double c,
-                         std::unique_ptr<Combiner> combiner,
+                         Combiner& combiner,
                          F funcOfLocalization) {
     if (data.size() < K) {
         return std::nullopt;
@@ -74,17 +74,17 @@ std::optional<TimePoint<>> localization(const std::vector<TimePoint<>>& data,
 
     CombinationsWithoutRepetition<K> combinations(data.size());
     auto indexSequence = std::make_index_sequence<K>{};
-    combiner->reset();
+    combiner.reset();
 
     do {
         auto combination = combinations.get();
         auto result = executeLocalization<F, K, typename decltype(indexSequence)::value_type>(data, c, funcOfLocalization, combination, indexSequence);
         if (result.has_value()) {
-            combiner->add(result.value());
+            combiner.add(result.value());
         }
     } while(combinations.next());
 
-    return combiner->result();
+    return combiner.result();
 }
 
 }

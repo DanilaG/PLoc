@@ -78,9 +78,9 @@ std::optional<TimePoint<>> localizationByDirectMethod(const TimePoint<>& p0, Tim
 
 std::optional<TimePoint<>> localizationByDirectMethod(const std::vector<TimePoint<>>& data,
                                                       double c,
-                                                      std::unique_ptr<Combiner> combiner) {
+                                                      Combiner& combiner) {
     using FuncType = std::optional<TimePoint<>>(*)(const TimePoint<>&, TimePoint<>, TimePoint<>, double);
-    return localization<3, FuncType>(data, c, std::move(combiner), localizationByDirectMethod);
+    return localization<3, FuncType>(data, c, combiner, localizationByDirectMethod);
 }
 
 }
