@@ -14,6 +14,9 @@ struct Field {
     /** Max value of x and y coordinates the field */
     pl::Point<> max;
 
+    /** Signal propagation speed */
+    double c;
+
     /** Positions of all detectors */
     std::vector<pl::Point<>> detectors;
 };

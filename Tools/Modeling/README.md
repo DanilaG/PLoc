@@ -30,6 +30,7 @@ Position of something. Contains fields:
 Describes a field for experiment. Contains fields:
 * `min` (_Point_) - minimal values of coordinates in a field;
 * `max` (_Point_) - maximal values of coordinates in a field;
+* `c` (_double_) - signal propagation speed;
 * `detectors` (_[Points]_) - array of detectors position.
 
 ### Grid

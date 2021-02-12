@@ -31,6 +31,7 @@ namespace json_param_name {
     namespace field {
         const std::string min = "min";
         const std::string max = "max";
+        const std::string c = "c";
         const std::string detectors = "detectors";
     }
 
@@ -51,6 +52,7 @@ Field getField(nlohmann::json& json) {
     Field field;
     field.min = getPoint(json.at(json_param_name::field::min));
     field.max = getPoint(json.at(json_param_name::field::max));
+    field.c = json.at(json_param_name::field::c).get<double>();
     field.detectors.clear();
     for (auto& i : json.at(json_param_name::field::detectors).items()) {
         field.detectors.push_back(getPoint(i.value()));

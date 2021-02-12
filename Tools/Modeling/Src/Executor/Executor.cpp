@@ -25,8 +25,6 @@ std::vector<pl::TimePoint<>> detection(const std::vector<pl::Point<>>& detectors
 }
 
 std::vector<ExperimentResult> conductExperiment(const ExperimentDescription& experiment) {
-    const double c = 10;
-
     /** Error generators */
     auto cErrorGenerator = errorGeneratorFactory(experiment.cErrorGenerator);
     auto timeErrorGenerator = errorGeneratorFactory(experiment.timeErrorGenerator);
@@ -59,14 +57,15 @@ std::vector<ExperimentResult> conductExperiment(const ExperimentDescription& exp
                 for (unsigned int attempt = 0; attempt < experiment.numberAttemptsInNode; attempt++) {
                     auto detections = detection(field.detectors,
                                                 signalLocation,
-                                                c,
+                                                field.c,
                                                 cErrorGenerator,
                                                 timeErrorGenerator);
 
                     /** Localization */
                     auto startTime = std::chrono::high_resolution_clock::now();
                     //TODO: combiner - reference
-                    auto localizationResult = localizationFunc(detections, c,
+                    auto localizationResult = localizationFunc(detections,
+                                                               field.c,
                                                                std::make_unique<pl::MeanCombiner>());
                     auto endTime = std::chrono::high_resolution_clock::now();
 
