@@ -63,10 +63,9 @@ std::vector<ExperimentResult> conductExperiment(const ExperimentDescription& exp
 
                     /** Localization */
                     auto startTime = std::chrono::high_resolution_clock::now();
-                    //TODO: combiner - reference
                     auto localizationResult = localizationFunc(detections,
                                                                field.c,
-                                                               std::make_unique<pl::MeanCombiner>());
+                                                               *combiner);
                     auto endTime = std::chrono::high_resolution_clock::now();
 
                     /** Experiment add duration */

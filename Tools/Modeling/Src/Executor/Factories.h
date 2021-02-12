@@ -10,9 +10,7 @@
 #include "ExperimentDescription.h"
 
 /** Type of function localization */
-using LocalizationFunc = std::function<std::optional<pl::TimePoint<>>(const std::vector<pl::TimePoint<>>&,
-                                                                      double,
-                                                                      std::unique_ptr<pl::Combiner>)>;
+using LocalizationFunc = std::optional<pl::TimePoint<>>(*)(const std::vector<pl::TimePoint<>>&, double, pl::Combiner&);
 
 /** Factories */
 std::shared_ptr<ErrorGenerator> linearErrorGeneratorFactory(std::shared_ptr<ErrorGeneratorDescription> description);
