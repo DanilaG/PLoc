@@ -51,9 +51,9 @@ std::optional<TimePoint<>> localizationByQuadrangleMethod(const TimePoint<>& p0,
 
 std::optional<TimePoint<>> localizationByQuadrangleMethod(const std::vector<TimePoint<>>& data,
                                                           double c,
-                                                          std::unique_ptr<Combiner> combiner) {
+                                                          Combiner& combiner) {
     using FuncType = std::optional<TimePoint<>>(*)(const TimePoint<> &, TimePoint<>, TimePoint<>, TimePoint<>, double);
-    return localization<4, FuncType>(data, c, std::move(combiner), localizationByQuadrangleMethod);
+    return localization<4, FuncType>(data, c, combiner, localizationByQuadrangleMethod);
 }
 
 }

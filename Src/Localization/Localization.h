@@ -10,20 +10,20 @@
 #include "Geometric/Points/TimePoint.h"
 
 namespace pl {
-    std::optional<TimePoint<>>
-        localizationByDirectMethod(const std::vector<TimePoint<>>& data,
-                                   double c,
-                                   std::unique_ptr<Combiner> combiner = std::make_unique<MeanCombiner>());
+    std::optional<TimePoint<>> localizationByDirectMethod(const std::vector<TimePoint<>>& data, double c);
+    std::optional<TimePoint<>> localizationByDirectMethod(const std::vector<TimePoint<>>& data,
+                                                          double c,
+                                                          Combiner& combiner);
 
-    std::optional<TimePoint<>>
-        localizationByQuadrangleMethod(const std::vector<TimePoint<>>& data,
-                                       double c,
-                                       std::unique_ptr<Combiner> combiner = std::make_unique<MeanCombiner>());
+    std::optional<TimePoint<>> localizationByQuadrangleMethod(const std::vector<TimePoint<>>& data, double c);
+    std::optional<TimePoint<>> localizationByQuadrangleMethod(const std::vector<TimePoint<>>& data,
+                                                              double c,
+                                                              Combiner& combiner);
 
-    std::optional<TimePoint<>>
-        localizationByVectorMethod(const std::vector<TimePoint<>>& data,
-                                   double c,
-                                   std::unique_ptr<Combiner> combiner = std::make_unique<MeanCombiner>());
+    std::optional<TimePoint<>> localizationByVectorMethod(const std::vector<TimePoint<>>& data, double c);
+    std::optional<TimePoint<>> localizationByVectorMethod(const std::vector<TimePoint<>>& data,
+                                                          double c,
+                                                          Combiner& combiner);
 }
 
 #endif //PLOC_LOCALIZATION_H

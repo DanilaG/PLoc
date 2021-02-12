@@ -14,6 +14,7 @@ set(EXECUTABLE
         Debug/Log.cpp
         Localization/Combiner/MeanCombiner.cpp
         Localization/DirectMethod.cpp
+        Localization/Localization.cpp
         Localization/QuadMethod.cpp
         Localization/VectorMethod.cpp
         )
