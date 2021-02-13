@@ -42,16 +42,16 @@ std::vector<ExperimentResult> conductExperiment(const ExperimentDescription& exp
 
         /** Grid step for the field */
         pl::Point<> gridStep = {
-            .x = (field.max.x - field.min.x) / (gridSize.width + 1),
-            .y = (field.max.y - field.min.y) / (gridSize.height + 1)
+            .x = (field.max.x - field.min.x) / (gridSize.width),
+            .y = (field.max.y - field.min.y) / (gridSize.height)
         };
 
         for (unsigned int xStep = 0; xStep < gridSize.width; xStep++) {
             for (unsigned int yStep = 0; yStep < gridSize.height; yStep++) {
                 /** Exact signal location */
                 pl::Point<> signalLocation = {
-                        .x = (xStep + 0.5) * gridStep.x,
-                        .y = (yStep + 0.5) * gridStep.y
+                        .x = (xStep + 0.5) * gridStep.x + field.min.x,
+                        .y = (yStep + 0.5) * gridStep.y + field.min.y
                 };
 
                 for (unsigned int attempt = 0; attempt < experiment.numberAttemptsInNode; attempt++) {
