@@ -68,3 +68,13 @@ Describe an experiment. Path to file with this JSON object must be specified on 
 * `time_error_generator` (_ErrorGenerator_) - generator errors in time detection;
 * `algorithm` (_AlgorithmType_) - localization algorithm type;
 * `combiner` (_CombinerType_) - combiner results algorithm type.
+
+## Output
+The program generate reports in out put directory. If an input experiment description has more the one field, all reports will be separated into subdirectories by fields, where the number directory corresponds to a field number in the input array.
+Output report for each field may contain files:
+* `TextReport.txt` - text description some experiment parameters with some result statistics;
+* `Detextord.dat` - description position of detectors according to [format requirement](http://grapherhelp.goldensoftware.com/WTOPICS/TOP_ASCIIFILES.htm);
+* `Distance.grd` - description errors in distance in signal localization on the field according to [format requirement](http://grapherhelp.goldensoftware.com/subsys/ascii_grid_file_format.htm);
+* `Time.grd` - description errors in time in signal localization on the field according to [format requirement](http://grapherhelp.goldensoftware.com/subsys/ascii_grid_file_format.htm).
+
+All formats were chosen for possibility to visualisation data in [Surfer®](https://www.goldensoftware.com/products/surfer).
