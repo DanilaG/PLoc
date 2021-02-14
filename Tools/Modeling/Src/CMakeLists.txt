@@ -9,6 +9,7 @@ set(HEADERS
         Executor/Factories.h
         Parsers/ExperimentJsonParser.h
         Parsers/OptionParser.h
+        Report/Report.h
         )
 
 set(EXECUTABLE
@@ -17,7 +18,7 @@ set(EXECUTABLE
         Parsers/OptionParser.cpp
         Executor/Executor.cpp
         Executor/Factories.cpp
-        )
+        Report/Report.cpp)
 
 FetchContent_Declare(
         cxxopts
@@ -53,7 +54,9 @@ include_directories(
         ../../../Src
         ../../../Src/Structures
         Descriptions
+        Executor
         Parsers
+        Report
         )
 
 add_executable(${PROJECT_NAME} ${HEADERS} ${EXECUTABLE})
