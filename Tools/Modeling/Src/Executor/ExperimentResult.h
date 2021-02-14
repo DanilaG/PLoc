@@ -19,10 +19,10 @@ public:
     double operator()(unsigned int x, unsigned int y) const { return data_[getDataIndex(x, y)]; }
 
     /** Get number answer in a node */
-    unsigned int massAnswer(unsigned int x, unsigned int y) { return counter_[getDataIndex(x, y)]; }
+    unsigned int massAnswer(unsigned int x, unsigned int y) const { return counter_[getDataIndex(x, y)]; }
 
     /** Return true, if the grid has value on a node */
-    bool hasValue(unsigned int x, unsigned int y) { return massAnswer(x, y); }
+    bool hasValue(unsigned int x, unsigned int y) const { return massAnswer(x, y); }
 
     /** Added new value to the grid */
     void add(unsigned int x, unsigned int y, double value) {
