@@ -1,15 +1,14 @@
 # How to use the program?
-You can run this program from terminal with next input arguments.
+You can run this program from a terminal with the next input arguments.
 ## Input arguments:
 * `experiment` (short name: `e`, required) - path to JSON file with experiment description;
 * `out` (short name: `o`, default: `""`) - output directory path;
-* `time` (short name: `t`, default: `false`) - flag for analyses time errors in experiment;
-* `distance` (short name: `d`, default: `false`) - flag for analyses distance errors in experiment;
+* `time` (short name: `t`, default: `false`) - flag for analysis time errors in an experiment;
+* `distance` (short name: `d`, default: `false`) - flag for analysis distance errors in an experiment;
 * `text_report` (short name: `r`, default: `false`) - flag for creation text description of an experiment;
 * `help` (short name: `h`, default: `false`) - return help message.
 
-Arguments `experiment` and `out` have implicit setting, if place they value at first and second position of arguments.
-
+Arguments `experiment` and `out` have an implicit setting if placed they value at a first and second position of arguments.
 ## Example start commands:  
 Next command conducts an experiment described in `"expirement.json"` file, save result, describing distance errors, and text report in `"out"` directory.  
 `PLoc_Modeling --experiment="expirement.json" --out="out" --distance --text_report`  
@@ -19,12 +18,12 @@ or:
 `PLoc_Modeling "expirement.json" "out" -dr`
 
 ## Experiment description format:
-Experiments described in JSON format. In description use next types:
+Experiments described in JSON format. In description use the next types:
 
 ### Point
 Position of something. Contains fields:
-* `x` (_double_) - first coordinate of point;
-* `y` (_double_) - second coordinate of point.
+* `x` (_double_) - first coordinate of a point;
+* `y` (_double_) - second coordinate of a point.
 
 ### Field
 Describes a field for experiment. Contains fields:
