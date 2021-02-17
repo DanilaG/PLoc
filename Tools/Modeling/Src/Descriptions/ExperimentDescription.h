@@ -29,16 +29,21 @@ public:
         Normal
     };
 
-    ErrorGeneratorDescription(GeneratorType generationType): generatorType(generationType) {}
+    ErrorGeneratorDescription(GeneratorType generationType, bool isRelativeErrors): generatorType(generationType),
+                                                                                    isRelativeErrors(isRelativeErrors) {}
 
     /** Type of generator */
     const GeneratorType generatorType;
+
+    /** True, if generate errors relative values */
+    const bool isRelativeErrors;
 };
 
 /** Linear generator */
 class LinearErrorGeneratorDescription: public ErrorGeneratorDescription {
 public:
-    LinearErrorGeneratorDescription(): ErrorGeneratorDescription(GeneratorType::Linear) {}
+    LinearErrorGeneratorDescription(bool isRelativeError): ErrorGeneratorDescription(GeneratorType::Linear,
+                                                                                     isRelativeError) {}
 
     /** Min return value */
     double minValue;
@@ -49,7 +54,8 @@ public:
 /** Normal generator */
 class NormalErrorGeneratorDescription: public ErrorGeneratorDescription {
 public:
-    NormalErrorGeneratorDescription(): ErrorGeneratorDescription(GeneratorType::Normal) {}
+    NormalErrorGeneratorDescription(bool isRelativeError): ErrorGeneratorDescription(GeneratorType::Normal,
+                                                                                     isRelativeError) {}
 
     /** Mean of a normal distribution */
     double mean;

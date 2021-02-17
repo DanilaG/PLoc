@@ -131,10 +131,16 @@ std::string lineOffset(unsigned int level) {
     return std::string(4 * level, ' ');
 }
 
+/** Return name of errors type */
+inline std::string getErrorsTypeName(bool isRelativeErrors) {
+    return isRelativeErrors ? "relative" : "direct";
+}
+
 /** Make text description of a linear error generator */
 std::string makeLinearErrorGeneratorDescription(const std::shared_ptr<ErrorGeneratorDescription>& description) {
     auto linearDescription = std::static_pointer_cast<LinearErrorGeneratorDescription>(description);
     return lineOffset(1) + "type: " + std::string(magic_enum::enum_name(linearDescription->generatorType)) + ";\n" +
+           lineOffset(1) + "error type: " + getErrorsTypeName(linearDescription->isRelativeErrors) + ";\n" +
            lineOffset(1) + "min value: " + std::to_string(linearDescription->minValue) + ";\n" +
            lineOffset(1) + "max value: " + std::to_string(linearDescription->maxValue) + ".\n";
 }
@@ -143,6 +149,7 @@ std::string makeLinearErrorGeneratorDescription(const std::shared_ptr<ErrorGener
 std::string makeNormalErrorGeneratorDescription(const std::shared_ptr<ErrorGeneratorDescription>& description) {
     auto linearDescription = std::static_pointer_cast<NormalErrorGeneratorDescription>(description);
     return lineOffset(1) + "type: " + std::string(magic_enum::enum_name(linearDescription->generatorType)) + ";\n" +
+           lineOffset(1) + "error type: " + getErrorsTypeName(linearDescription->isRelativeErrors) + ";\n" +
            lineOffset(1) + "mean: " + std::to_string(linearDescription->mean) + ";\n" +
            lineOffset(1) + "standard deviation: " + std::to_string(linearDescription->standardDeviation) + ".\n";
 }

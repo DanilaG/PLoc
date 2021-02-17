@@ -17,9 +17,10 @@ std::vector<pl::TimePoint<>> detection(const std::vector<pl::Point<>>& detectors
                                        std::shared_ptr<ErrorGenerator> timeErrorGenerator) {
     std::vector<pl::TimePoint<>> result(detectors.size());
     for (unsigned int i = 0; i < result.size(); i++) {
-        const double cError    = cErrorGenerator->get();
-        const double timeError = timeErrorGenerator->get();
-        result[i] = { detectors[i],timeDetection(signalLocation, detectors[i], c + cError) + timeError };
+        result[i] = { detectors[i],
+                      timeErrorGenerator->applyErrorTo(
+                              timeDetection(signalLocation, detectors[i], cErrorGenerator->applyErrorTo(c))
+                      )};
     }
     return result;
 }

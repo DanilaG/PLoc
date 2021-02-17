@@ -43,9 +43,10 @@ Describes random error generator. Contains fields:
 * `type` - type of generator. Can take the following values:
     * `Linear` - for generator with linear distribution;
     * `Normal` - for generator with normal distribution;
+* `relative_errors` - true, if errors depend on value. In other words, if it is true value with error equal _value * (1 + error_), else _value + error_;
 * Fields describing the generator.
     
-#### Linear ErrorGenerator fields
+#### LinearErrorGenerator fields
 * `min_value` (_double_) - low generator border;
 * `max_value` (_double_) - upper generator border.
 

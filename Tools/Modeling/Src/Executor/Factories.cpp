@@ -6,12 +6,16 @@
 
 std::shared_ptr<ErrorGenerator> linearErrorGeneratorFactory(std::shared_ptr<ErrorGeneratorDescription> description) {
     auto linearDescription = std::static_pointer_cast<LinearErrorGeneratorDescription>(description);
-    return std::make_shared<LinearErrorGenerator>(linearDescription->minValue, linearDescription->maxValue);
+    return std::make_shared<LinearErrorGenerator>(linearDescription->minValue,
+                                                  linearDescription->maxValue,
+                                                  linearDescription->isRelativeErrors);
 }
 
 std::shared_ptr<ErrorGenerator> normalErrorGeneratorFactory(std::shared_ptr<ErrorGeneratorDescription> description) {
     auto normalDescription = std::static_pointer_cast<NormalErrorGeneratorDescription>(description);
-    return std::make_shared<NormalErrorGenerator>(normalDescription->mean, normalDescription->standardDeviation);
+    return std::make_shared<NormalErrorGenerator>(normalDescription->mean,
+                                                  normalDescription->standardDeviation,
+                                                  description->isRelativeErrors);
 }
 
 std::shared_ptr<ErrorGenerator> errorGeneratorFactory(std::shared_ptr<ErrorGeneratorDescription> description) {

@@ -6,27 +6,41 @@
 /** Error generator protocol */
 class ErrorGenerator {
 public:
-    ErrorGenerator() {
+    /** Constructor accepting type of an errors (relative to a value if true) */
+    ErrorGenerator(bool isRelativeErrors) {
         std::random_device d;
-        gen = std::mt19937(d());
+        gen_ = std::mt19937(d());
+        isRelativeErrors_ = isRelativeErrors;
     }
 
-    /** Get error */
-    virtual double get() = 0;
-    double operator()() { return get(); }
+    /** Return value with error */
+    virtual double applyErrorTo(const double value) {
+        double error = getError();
+        return value + (isRelativeErrors_ ? value * error : error);
+    }
+    double operator()(const double value) { return applyErrorTo(value); }
 
 protected:
-    std::mt19937 gen;
+    /** Standard generator */
+    std::mt19937 gen_;
+
+    /** Count an error relative to a value */
+    bool isRelativeErrors_;
+
+    /** Generate error value */
+    virtual double getError() = 0;
 };
 
 /** Error generator with linear distribution */
 class LinearErrorGenerator: public ErrorGenerator {
 public:
-    /** Constructor accepting minimum and maximum value of a error */
-    LinearErrorGenerator(double min, double max): distribution_(min, max) {}
+    /** Constructor accepting minimum, maximum value of an errors and type of an errors */
+    LinearErrorGenerator(double min, double max, bool isRelativeErrors): ErrorGenerator(isRelativeErrors),
+                                                                         distribution_(min, max) {}
 
-    double get() final {
-        return distribution_(gen);
+protected:
+    double getError() final {
+        return distribution_(gen_);
     }
 
 protected:
@@ -36,11 +50,15 @@ protected:
 /** Error generator with normal distribution */
 class NormalErrorGenerator: public ErrorGenerator {
 public:
-    /** Constructor accepting mean and standard deviation of normal distribution */
-    NormalErrorGenerator(double mean, double standardDeviation): distribution_(mean, standardDeviation) {}
+    /** Constructor accepting mean, standard deviation of normal distribution and type of an errors */
+    NormalErrorGenerator(double mean,
+                         double standardDeviation,
+                         bool isRelativeErrors): ErrorGenerator(isRelativeErrors),
+                                                distribution_(mean, standardDeviation) {}
 
-    double get() final {
-        return distribution_(gen);
+protected:
+    double getError() final {
+        return distribution_(gen_);
     }
 
 protected:

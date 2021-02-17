@@ -18,14 +18,19 @@ namespace json_param_name {
         const std::string combinerType = "combiner";
     }
 
-    namespace norm_distrib {
-        const std::string mean = "mean";
-        const std::string standardDeviation = "standard_deviation";
-    }
+    namespace error_gen {
+        const std::string type = "type";
+        const std::string isRelativeErrors = "relative_errors";
 
-    namespace linear_distrib {
-        const std::string minValue = "min_value";
-        const std::string maxValue = "max_value";
+        namespace norm_distrib {
+            const std::string mean = "mean";
+            const std::string standardDeviation = "standard_deviation";
+        }
+
+        namespace linear_distrib {
+            const std::string minValue = "min_value";
+            const std::string maxValue = "max_value";
+        }
     }
 
     namespace field {
@@ -81,16 +86,18 @@ std::vector<Field> getFields(nlohmann::json& json) {
 };
 
 std::shared_ptr<ErrorGeneratorDescription> getLinearRandomGenerator(nlohmann::json& json) {
-    auto data = std::make_shared<LinearErrorGeneratorDescription>();
-    data->maxValue = json.at(json_param_name::linear_distrib::maxValue).get<double>();
-    data->minValue = json.at(json_param_name::linear_distrib::minValue).get<double>();
+    bool isRelativeErrors = json.at(json_param_name::error_gen::isRelativeErrors).get<bool>();
+    auto data = std::make_shared<LinearErrorGeneratorDescription>(isRelativeErrors);
+    data->maxValue = json.at(json_param_name::error_gen::linear_distrib::maxValue).get<double>();
+    data->minValue = json.at(json_param_name::error_gen::linear_distrib::minValue).get<double>();
     return data;
 }
 
 std::shared_ptr<ErrorGeneratorDescription> getNormalRandomGenerator(nlohmann::json& json) {
-    auto data = std::make_shared<NormalErrorGeneratorDescription>();
-    data->mean = json.at(json_param_name::norm_distrib::mean).get<double>();
-    data->standardDeviation = json.at(json_param_name::norm_distrib::standardDeviation).get<double>();
+    bool isRelativeErrors = json.at(json_param_name::error_gen::isRelativeErrors).get<bool>();
+    auto data = std::make_shared<NormalErrorGeneratorDescription>(isRelativeErrors);
+    data->mean = json.at(json_param_name::error_gen::norm_distrib::mean).get<double>();
+    data->standardDeviation = json.at(json_param_name::error_gen::norm_distrib::standardDeviation).get<double>();
     return data;
 }
 
@@ -101,7 +108,7 @@ std::shared_ptr<ErrorGeneratorDescription> getRandomGenerator(nlohmann::json& js
             getNormalRandomGenerator
     };
 
-    const std::string typeName = json.at("type").get<std::string>();
+    const std::string typeName = json.at(json_param_name::error_gen::type).get<std::string>();
     auto type = magic_enum::enum_cast<ErrorGeneratorDescription::GeneratorType>(typeName);
     if (!type.has_value()) {
         throw std::invalid_argument("Wrong type of error generator.");
