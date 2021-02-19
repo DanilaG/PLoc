@@ -37,35 +37,35 @@ std::vector<ExperimentResult> conductExperiment(const ExperimentDescription& exp
     GridResult::Size gridSize = {.width = experiment.gridSize.width, .height = experiment.gridSize.height};
     std::vector<ExperimentResult> answer;
 
-    for (auto& field: experiment.fields) {
-        /** Experiment result for current field */
+    for (auto& scene: experiment.scenes) {
+        /** Experiment result for current scene */
         ExperimentResult result(gridSize);
 
-        /** Grid step for the field */
+        /** Grid step for the scene area */
         pl::Point<> gridStep = {
-            .x = (field.max.x - field.min.x) / (gridSize.width),
-            .y = (field.max.y - field.min.y) / (gridSize.height)
+            .x = (scene.bound.max.x - scene.bound.min.x) / (gridSize.width),
+            .y = (scene.bound.max.y - scene.bound.min.y) / (gridSize.height)
         };
 
         for (unsigned int xStep = 0; xStep < gridSize.width; xStep++) {
             for (unsigned int yStep = 0; yStep < gridSize.height; yStep++) {
                 /** Exact signal location */
                 pl::Point<> signalLocation = {
-                        .x = (xStep + 0.5) * gridStep.x + field.min.x,
-                        .y = (yStep + 0.5) * gridStep.y + field.min.y
+                        .x = (xStep + 0.5) * gridStep.x + scene.bound.min.x,
+                        .y = (yStep + 0.5) * gridStep.y + scene.bound.min.y
                 };
 
-                for (unsigned int attempt = 0; attempt < experiment.numberAttemptsInNode; attempt++) {
-                    auto detections = detection(field.detectors,
+                for (unsigned int attempt = 0; attempt < experiment.numberAttempts; attempt++) {
+                    auto detections = detection(scene.detectors,
                                                 signalLocation,
-                                                field.c,
+                                                scene.c,
                                                 cErrorGenerator,
                                                 timeErrorGenerator);
 
                     /** Localization */
                     auto startTime = std::chrono::high_resolution_clock::now();
                     auto localizationResult = localizationFunc(detections,
-                                                               field.c,
+                                                               scene.c,
                                                                *combiner);
                     auto endTime = std::chrono::high_resolution_clock::now();
 

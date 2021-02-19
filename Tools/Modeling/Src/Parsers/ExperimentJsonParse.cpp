@@ -7,7 +7,7 @@
 /** Parameters names */
 namespace json_param_name {
     namespace experiment {
-        const std::string fields = "fields";
+        const std::string scenes = "scenes";
         const std::string grid = "grid";
         const std::string gridWidth = "width";
         const std::string gridHeight = "height";
@@ -33,11 +33,15 @@ namespace json_param_name {
         }
     }
 
-    namespace field {
-        const std::string min = "min";
-        const std::string max = "max";
+    namespace scene {
+        namespace bound {
+            const std::string min = "min";
+            const std::string max = "max";
+        }
+        const std::string boundName = "bound";
         const std::string c = "c";
         const std::string detectors = "detectors";
+        const std::string signals = "signals";
     }
 
     namespace point {
@@ -53,36 +57,42 @@ pl::Point<> getPoint(nlohmann::json& json) {
     return point;
 }
 
-Field getField(nlohmann::json& json) {
-    Field field;
-    field.min = getPoint(json.at(json_param_name::field::min));
-    field.max = getPoint(json.at(json_param_name::field::max));
-    field.c = json.at(json_param_name::field::c).get<double>();
-    field.detectors.clear();
-    for (auto& i : json.at(json_param_name::field::detectors).items()) {
-        field.detectors.push_back(getPoint(i.value()));
+Scene::Bound getBounds(nlohmann::json& json){
+    Scene::Bound bounds;
+    bounds.min = getPoint(json.at(json_param_name::scene::bound::min));
+    bounds.max = getPoint(json.at(json_param_name::scene::bound::max));
+    return bounds;
+};
+
+Scene getScene(nlohmann::json& json) {
+    Scene scene;
+    scene.bound = getBounds(json.at(json_param_name::scene::boundName));
+    scene.c = json.at(json_param_name::scene::c).get<double>();
+    scene.detectors.clear();
+    for (auto& i : json.at(json_param_name::scene::detectors).items()) {
+        scene.detectors.push_back(getPoint(i.value()));
     }
-    return field;
+    return scene;
 }
 
-std::vector<Field> getFields(nlohmann::json& json) {
-    std::vector<Field> fields;
+std::vector<Scene> getScenes(nlohmann::json& json) {
+    std::vector<Scene> scenes;
     for (auto& i : json.items()) {
-        nlohmann::json fieldJson;
+        nlohmann::json sceneJson;
         if (i.value().is_string()) {
             auto fileName = i.value().get<std::string>();
             std::ifstream file(fileName);
             if (!file.is_open()) {
-                throw std::invalid_argument("File " + fileName + " with field wasn't open.");
+                throw std::invalid_argument("File \"" + fileName + "\" with scene wasn't open.");
             }
-            file >> fieldJson;
+            file >> sceneJson;
             file.close();
         } else {
-            fieldJson = i.value();
+            sceneJson = i.value();
         }
-        fields.push_back(getField(fieldJson));
+        scenes.push_back(getScene(sceneJson));
     }
-    return fields;
+    return scenes;
 };
 
 std::shared_ptr<ErrorGeneratorDescription> getLinearRandomGenerator(nlohmann::json& json) {
@@ -122,7 +132,7 @@ T getEnumFromJson(nlohmann::json& json, const std::string& paramName) {
     const std::string jsonValue = json.at(paramName).get<std::string>();
     auto optionalValue = magic_enum::enum_cast<T>(jsonValue);
     if (!optionalValue.has_value()) {
-        throw std::invalid_argument("Field " + paramName + " have wrong argument: " +
+        throw std::invalid_argument("Scene " + paramName + " have wrong argument: " +
                                     jsonValue + ".");
     }
     return optionalValue.value();
@@ -132,8 +142,8 @@ ExperimentDescription getExperimentDescription(nlohmann::json& json) {
     ExperimentDescription experiment;
 
     try {
-        /** Fields */
-        experiment.fields = getFields(json.at(json_param_name::experiment::fields));
+        /** Scenes */
+        experiment.scenes = getScenes(json.at(json_param_name::experiment::scenes));
 
         /** Grid */
         auto jsonGrid = json.at(json_param_name::experiment::grid);
@@ -141,8 +151,7 @@ ExperimentDescription getExperimentDescription(nlohmann::json& json) {
         experiment.gridSize.height = jsonGrid.at(json_param_name::experiment::gridHeight).get<unsigned int>();
 
         /** Attempts */
-        experiment.numberAttemptsInNode =
-                json.at(json_param_name::experiment::numberAttemptsInNode).get<unsigned int>();
+        experiment.numberAttempts = json.at(json_param_name::experiment::numberAttemptsInNode).get<unsigned int>();
 
         /** Error generators */
         experiment.cErrorGenerator = getRandomGenerator(json.at(json_param_name::experiment::cErrorGenerator));

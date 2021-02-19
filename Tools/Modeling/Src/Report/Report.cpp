@@ -106,23 +106,23 @@ void saveGridInTextGrdFormat(const GridResult& grid,
 struct ParametersForSave {
     const ExperimentDescription& experimentDescription;
     const std::vector<ExperimentResult>& experimentResults;
-    unsigned int fieldIndex;
+    unsigned int scenedIndex;
     const std::string& outPath;
 };
 
 /** Create .grd file with distance errors grid */
 void saveDistanceErrorsGrid(const ParametersForSave& args) {
-    saveGridInTextGrdFormat(args.experimentResults[args.fieldIndex].distance,
-                            args.experimentDescription.fields[args.fieldIndex].min,
-                            args.experimentDescription.fields[args.fieldIndex].max,
+    saveGridInTextGrdFormat(args.experimentResults[args.scenedIndex].distance,
+                            args.experimentDescription.scenes[args.scenedIndex].bound.min,
+                            args.experimentDescription.scenes[args.scenedIndex].bound.max,
                             args.outPath + "Distance.grd");
 }
 
 /** Create .grd file with time errors grid */
 void saveTimeErrorsGrid(const ParametersForSave& args) {
-    saveGridInTextGrdFormat(args.experimentResults[args.fieldIndex].time,
-                            args.experimentDescription.fields[args.fieldIndex].min,
-                            args.experimentDescription.fields[args.fieldIndex].max,
+    saveGridInTextGrdFormat(args.experimentResults[args.scenedIndex].time,
+                            args.experimentDescription.scenes[args.scenedIndex].bound.min,
+                            args.experimentDescription.scenes[args.scenedIndex].bound.max,
                             args.outPath + "Time.grd");
 }
 
@@ -175,12 +175,12 @@ void saveTextReport(const ParametersForSave& args) {
         throw std::invalid_argument("Can't open " + outFileName + ".");
     }
 
-    auto field = args.experimentDescription.fields[args.fieldIndex];
+    auto scene = args.experimentDescription.scenes[args.scenedIndex];
     unsigned int numberGeneratedSignals = args.experimentDescription.gridSize.width *
                                           args.experimentDescription.gridSize.height *
-                                          args.experimentDescription.numberAttemptsInNode;
+                                          args.experimentDescription.numberAttempts;
 
-    file << "Signal propagation speed: " << field.c << ".\n" << std::endl;
+    file << "Signal propagation speed: " << scene.c << ".\n" << std::endl;
 
     file << "Signal propagation speed error generator:\n"
          << makeErrorGeneratorDescription(args.experimentDescription.cErrorGenerator) << std::endl;
@@ -192,19 +192,19 @@ void saveTextReport(const ParametersForSave& args) {
     file << "Combiner algorithm: "
          << magic_enum::enum_name(args.experimentDescription.combinerType) << ".\n" << std::endl;
 
-    file << "Number attempts of location in each node: "
-         << args.experimentDescription.numberAttemptsInNode << ".\n" << std::endl;
+    file << "Number attempts of location in each signal / node: "
+         << args.experimentDescription.numberAttempts << ".\n" << std::endl;
 
-    file << "Mean distance error: " << meanValue(args.experimentResults[args.fieldIndex].distance) << ".\n";
-    file << "Mean time error: " << meanValue(args.experimentResults[args.fieldIndex].time) << ".\n" << std::endl;
+    file << "Mean distance error: " << meanValue(args.experimentResults[args.scenedIndex].distance) << ".\n";
+    file << "Mean time error: " << meanValue(args.experimentResults[args.scenedIndex].time) << ".\n" << std::endl;
 
     file << "Percent of localized signals: "
-         << gridMass(args.experimentResults[args.fieldIndex].time) / double(numberGeneratedSignals) * 100 << "%.\n"
+         << gridMass(args.experimentResults[args.scenedIndex].time) / double(numberGeneratedSignals) * 100 << "%.\n"
          << std::endl;
 
-    file << "Full localization time: " << args.experimentResults[args.fieldIndex].duration << " milliseconds.\n";
+    file << "Full localization time: " << args.experimentResults[args.scenedIndex].duration << " milliseconds.\n";
     file << "Mean localization time of a signal: "
-         << args.experimentResults[args.fieldIndex].duration / numberGeneratedSignals << " milliseconds.\n"
+         << args.experimentResults[args.scenedIndex].duration / numberGeneratedSignals << " milliseconds.\n"
          << std::endl;
 
     file.close();
@@ -219,12 +219,12 @@ void makeReport(const ExperimentDescription& experimentDescription,
             {ReportDescription::Measurer::Time, saveTimeErrorsGrid }
     };
 
-    for (unsigned int fieldIndex = 0; fieldIndex < experimentResults.size(); fieldIndex++) {
+    for (unsigned int sceneIndex = 0; sceneIndex < experimentResults.size(); sceneIndex++) {
         std::string outPath = reportDescription.outPath + std::string(1, std::filesystem::path::preferred_separator);
 
         /** Create directories with reports */
         if (experimentResults.size() > 1) {
-            outPath += ("Field" + std::to_string(fieldIndex) +
+            outPath += ("Scene" + std::to_string(sceneIndex) +
                         std::string(1, std::filesystem::path::preferred_separator));
             std::filesystem::path dir(outPath);
             if (!std::filesystem::exists(dir)) {
@@ -232,14 +232,14 @@ void makeReport(const ExperimentDescription& experimentDescription,
             }
         }
 
-        ParametersForSave dataSaving = {experimentDescription, experimentResults, fieldIndex, outPath};
+        ParametersForSave dataSaving = {experimentDescription, experimentResults, sceneIndex, outPath};
 
         for (const auto &i: reportDescription.measurers) {
             measurerSaverFactories[i](dataSaving);
         }
 
         if (!reportDescription.measurers.empty()) {
-            saveDetectorsInDatFormat(experimentDescription.fields[fieldIndex].detectors, outPath + "Detectors.dat");
+            saveDetectorsInDatFormat(experimentDescription.scenes[sceneIndex].detectors, outPath + "Detectors.dat");
         }
 
         if (reportDescription.useTextDescription) {

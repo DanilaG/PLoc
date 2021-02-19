@@ -5,7 +5,7 @@
 
 #include "ExperimentDescription.h"
 
-Field getField(nlohmann::json& json);
+Scene getScene(nlohmann::json& json);
 ExperimentDescription getExperimentDescription(nlohmann::json& json);
 
 #endif //PLOC_EXPERIMENTJSONPARSER_H

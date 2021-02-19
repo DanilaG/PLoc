@@ -6,13 +6,16 @@
 
 #include <Geometric/Points/Point.h>
 
-/** Describe experiment field */
-struct Field {
-    /** Min value of x and y coordinates the field */
-    pl::Point<> min;
+/** Describe experiment scene */
+struct Scene {
+    /** Bound of a area under consideration */
+    struct Bound {
+        /** Min value of x and y coordinates the area */
+        pl::Point<> min;
 
-    /** Max value of x and y coordinates the field */
-    pl::Point<> max;
+        /** Max value of x and y coordinates the area */
+        pl::Point<> max;
+    } bound;
 
     /** Signal propagation speed */
     double c;
@@ -63,7 +66,7 @@ public:
     double standardDeviation;
 };
 
-/** Descript of a experiment */
+/** Describe of a experiment */
 struct ExperimentDescription {
     /** Type of localization algorithm */
     enum class LocalizationAlgoType {
@@ -77,7 +80,7 @@ struct ExperimentDescription {
         Mean
     };
 
-    /** Field sampling grid */
+    /** Scene area sampling grid */
     struct GridSize {
         /** Number of nodes on the x axis in the grid */
         unsigned int width;
@@ -86,11 +89,11 @@ struct ExperimentDescription {
         unsigned int height;
     };
 
-    std::vector<Field> fields;
+    std::vector<Scene> scenes;
     GridSize gridSize;
 
-    /** Number of attempts experiments in each node */
-    unsigned int numberAttemptsInNode;
+    /** Number of attempts experiments in each signal / node */
+    unsigned int numberAttempts;
 
     std::shared_ptr<ErrorGeneratorDescription> cErrorGenerator;
     std::shared_ptr<ErrorGeneratorDescription> timeErrorGenerator;
