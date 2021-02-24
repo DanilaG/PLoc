@@ -72,6 +72,14 @@ Scene getScene(nlohmann::json& json) {
     for (auto& i : json.at(json_param_name::scene::detectors).items()) {
         scene.detectors.push_back(getPoint(i.value()));
     }
+
+    scene.signals = std::vector<pl::Point<>>();
+    if (json.contains(json_param_name::scene::signals)) {
+        for (auto& signal : json.at(json_param_name::scene::signals).items()) {
+            scene.signals.push_back(getPoint(signal.value()));
+        }
+    }
+
     return scene;
 }
 

@@ -1,6 +1,7 @@
 #include "Executor.h"
 
 #include <chrono>
+#include <optional>
 
 #include "Factories.h"
 
@@ -25,7 +26,8 @@ std::vector<pl::TimePoint<>> detection(const std::vector<pl::Point<>>& detectors
     return result;
 }
 
-std::vector<ExperimentResult> conductExperiment(const ExperimentDescription& experiment) {
+/** Conduct grid part of an experiment according to a description */
+std::vector<GridExperimentResult> conductExperimentForGrid(const ExperimentDescription& experiment) {
     /** Error generators */
     auto cErrorGenerator = errorGeneratorFactory(experiment.cErrorGenerator);
     auto timeErrorGenerator = errorGeneratorFactory(experiment.timeErrorGenerator);
@@ -35,11 +37,11 @@ std::vector<ExperimentResult> conductExperiment(const ExperimentDescription& exp
     auto localizationFunc = localizationAlgorithmFactory(experiment.algoType);
 
     GridResult::Size gridSize = {.width = experiment.gridSize.width, .height = experiment.gridSize.height};
-    std::vector<ExperimentResult> answer;
+    std::vector<GridExperimentResult> answer;
 
-    for (auto& scene: experiment.scenes) {
+    for (auto& scene : experiment.scenes) {
         /** Experiment result for current scene */
-        ExperimentResult result(gridSize);
+        GridExperimentResult result(gridSize);
 
         /** Grid step for the scene area */
         pl::Point<> gridStep = {
@@ -86,4 +88,82 @@ std::vector<ExperimentResult> conductExperiment(const ExperimentDescription& exp
     }
 
     return answer;
+}
+
+/** Conduct signal detection part of an experiment according to a description */
+std::vector<std::vector<SignalExperimentResult>> conductExperimentForSignals(const ExperimentDescription& experiment) {
+    /** Error generators */
+    auto cErrorGenerator = errorGeneratorFactory(experiment.cErrorGenerator);
+    auto timeErrorGenerator = errorGeneratorFactory(experiment.timeErrorGenerator);
+
+    /** Localization algorithms */
+    auto combiner = combinerFactory(experiment.combinerType);
+    auto localizationFunc = localizationAlgorithmFactory(experiment.algoType);
+
+    std::vector<std::vector<SignalExperimentResult>> answer;
+
+    for (auto& scene : experiment.scenes) {
+        answer.emplace_back();
+        for (auto& signal : scene.signals) {
+            answer.back().emplace_back();
+            for (unsigned int attempt = 0; attempt < experiment.numberAttempts; attempt++) {
+                auto detections = detection(scene.detectors,
+                                            signal,
+                                            scene.c,
+                                            cErrorGenerator,
+                                            timeErrorGenerator);
+
+                auto localizationResult = localizationFunc(detections,
+                                                           scene.c,
+                                                           *combiner);
+                if (localizationResult.has_value()) {
+                    answer.back().back().detected.push_back(localizationResult.value());
+                }
+            }
+        }
+    }
+
+    return answer;
+}
+
+/** Combine experiments results */
+std::vector<ExperimentResult> combine(const std::optional<std::vector<GridExperimentResult>>& gridResults,
+                                      const std::vector<std::vector<SignalExperimentResult>>& signalResults) {
+    if (gridResults.has_value() && !signalResults.empty() && signalResults.size() != gridResults->size()) {
+        throw std::range_error("Inner error. Different size of results.");
+    }
+
+    unsigned int experimentsNumber = signalResults.size();
+    if (gridResults.has_value()) {
+        experimentsNumber = std::max(experimentsNumber, static_cast<unsigned int>(gridResults->size()));
+    }
+
+    std::vector<ExperimentResult> answer;
+    for (unsigned int i = 0; i < experimentsNumber; i++) {
+        answer.push_back({
+            .grid = gridResults.has_value() ? std::optional<GridExperimentResult>(gridResults.value()[i]) :
+                                              std::nullopt,
+            .signal = signalResults.size() == experimentsNumber ? signalResults[i] :
+                                                                  std::vector<SignalExperimentResult>()
+        });
+    }
+
+    return answer;
+}
+
+std::vector<ExperimentResult> conductExperiment(const ExperimentDescription& experiment) {
+    bool isNeedGrid =
+            experiment.type == ExperimentDescription::Type::Grid ||
+            experiment.type == ExperimentDescription::Type::GridAndSignal;
+
+    bool isNeedSignal =
+            experiment.type == ExperimentDescription::Type::Signal ||
+            experiment.type == ExperimentDescription::Type::GridAndSignal;
+
+    return combine(
+            isNeedGrid ? std::optional<std::vector<GridExperimentResult>>(conductExperimentForGrid(experiment)) :
+                         std::nullopt,
+            isNeedSignal ? conductExperimentForSignals(experiment) :
+                           std::vector<std::vector<SignalExperimentResult>>()
+            );
 }

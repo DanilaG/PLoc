@@ -22,6 +22,9 @@ struct Scene {
 
     /** Positions of all detectors */
     std::vector<pl::Point<>> detectors;
+
+    /** Signals position */
+    std::vector<pl::Point<>> signals;
 };
 
 /** Description of random error generator */
@@ -68,6 +71,16 @@ public:
 
 /** Describe of a experiment */
 struct ExperimentDescription {
+    /** Type of a experiment */
+    enum class Type {
+        /** Explore only grid in scene bounds */
+        Grid,
+        /** Explore only localization specified signals */
+        Signal,
+        /** Explore grid and signals */
+        GridAndSignal
+    };
+
     /** Type of localization algorithm */
     enum class LocalizationAlgoType {
         Direct,
@@ -88,6 +101,8 @@ struct ExperimentDescription {
         /** Number of nodes on the y axis in the grid */
         unsigned int height;
     };
+
+    Type type = Type::GridAndSignal;
 
     std::vector<Scene> scenes;
     GridSize gridSize;

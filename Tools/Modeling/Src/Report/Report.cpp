@@ -37,7 +37,7 @@ double meanValue(const GridResult& grid) {
 }
 
 /** Compute min and max in a grid */
-std::pair<double, double> minMax(const GridResult& grid) {
+std::pair<double, double> minMax(const GridProtocol& grid) {
     if (grid.size().width == 0 && grid.size().height == 0) {
         return {0, 0};
     }
@@ -71,14 +71,13 @@ void saveDetectorsInDatFormat(const std::vector<pl::Point<>>& detectors, const s
     file.close();
 }
 
-
 /** Save grid data in GRD text format according:
   * http://grapherhelp.goldensoftware.com/subsys/ascii_grid_file_format.htm */
-void saveGridInTextGrdFormat(const GridResult& grid,
+void saveGridInTextGrdFormat(const GridProtocol& grid,
                              const pl::Point<>& min,
                              const pl::Point<>& max,
-                             const std::string& outFileName) {
-    const std::string nanValue = "1.71041e38";
+                             const std::string& outFileName,
+                             std::string (*getElement)(const GridProtocol&, unsigned int, unsigned int)) {
     const auto zMinMax = minMax(grid);
 
     std::ofstream file(outFileName);
@@ -94,12 +93,39 @@ void saveGridInTextGrdFormat(const GridResult& grid,
 
     for (unsigned int y = 0; y < grid.size().height; y++) {
         for (unsigned int x = 0; x < grid.size().width; x++) {
-            file << (grid.hasValue(x, y) ? std::to_string(grid(x, y)) : nanValue ) << " ";
+            file << getElement(grid, x, y) << " ";
         }
         file << std::endl;
     }
 
     file.close();
+}
+
+/** Return GridResult value or NAN in GRD text format */
+std::string getGritResultOutValue(const GridProtocol& grid, unsigned int x, unsigned int y) {
+    const std::string nanValue = "1.71041e38";
+    return static_cast<const GridResult*>(&grid)->hasValue(x, y) ? std::to_string(grid(x, y)) : nanValue;
+}
+
+/** Save GridResult in GRD text format */
+void saveGridResultInTextGrdFormat(const GridResult& grid,
+                                   const pl::Point<>& min,
+                                   const pl::Point<>& max,
+                                   const std::string& outFileName) {
+    saveGridInTextGrdFormat(grid, min, max, outFileName, getGritResultOutValue);
+}
+
+/** Return Grid value or NAN in GRD text format */
+std::string getGritOutValue(const GridProtocol& grid, unsigned int x, unsigned int y) {
+    return std::to_string(grid(x, y));
+}
+
+/** Save Grid in GRD text format */
+void saveGridInTextGrdFormat(const Grid& grid,
+                             const pl::Point<>& min,
+                             const pl::Point<>& max,
+                             const std::string& outFileName) {
+    saveGridInTextGrdFormat(grid, min, max, outFileName, getGritOutValue);
 }
 
 /** Combine arguments for save functions */
@@ -112,18 +138,22 @@ struct ParametersForSave {
 
 /** Create .grd file with distance errors grid */
 void saveDistanceErrorsGrid(const ParametersForSave& args) {
-    saveGridInTextGrdFormat(args.experimentResults[args.scenedIndex].distance,
-                            args.experimentDescription.scenes[args.scenedIndex].bound.min,
-                            args.experimentDescription.scenes[args.scenedIndex].bound.max,
-                            args.outPath + "Distance.grd");
+    if (args.experimentResults[args.scenedIndex].grid.has_value()) {
+        saveGridResultInTextGrdFormat(args.experimentResults[args.scenedIndex].grid->distance,
+                                      args.experimentDescription.scenes[args.scenedIndex].bound.min,
+                                      args.experimentDescription.scenes[args.scenedIndex].bound.max,
+                                      args.outPath + "Distance.grd");
+    }
 }
 
 /** Create .grd file with time errors grid */
 void saveTimeErrorsGrid(const ParametersForSave& args) {
-    saveGridInTextGrdFormat(args.experimentResults[args.scenedIndex].time,
-                            args.experimentDescription.scenes[args.scenedIndex].bound.min,
-                            args.experimentDescription.scenes[args.scenedIndex].bound.max,
-                            args.outPath + "Time.grd");
+    if (args.experimentResults[args.scenedIndex].grid.has_value()) {
+        saveGridResultInTextGrdFormat(args.experimentResults[args.scenedIndex].grid->time,
+                                      args.experimentDescription.scenes[args.scenedIndex].bound.min,
+                                      args.experimentDescription.scenes[args.scenedIndex].bound.max,
+                                      args.outPath + "Time.grd");
+    }
 }
 
 /** Return space offset according line level */
@@ -195,19 +225,99 @@ void saveTextReport(const ParametersForSave& args) {
     file << "Number attempts of location in each signal / node: "
          << args.experimentDescription.numberAttempts << ".\n" << std::endl;
 
-    file << "Mean distance error: " << meanValue(args.experimentResults[args.scenedIndex].distance) << ".\n";
-    file << "Mean time error: " << meanValue(args.experimentResults[args.scenedIndex].time) << ".\n" << std::endl;
+    /** Grid text report part */
+    if (args.experimentResults[args.scenedIndex].grid.has_value()) {
+        file << "Mean distance error: " << meanValue(args.experimentResults[args.scenedIndex].grid->distance) << ".\n";
+        file << "Mean time error: " << meanValue(args.experimentResults[args.scenedIndex].grid->time) << ".\n"
+             << std::endl;
 
-    file << "Percent of localized signals: "
-         << gridMass(args.experimentResults[args.scenedIndex].time) / double(numberGeneratedSignals) * 100 << "%.\n"
-         << std::endl;
+        file << "Percent of localized signals: "
+             << gridMass(args.experimentResults[args.scenedIndex].grid->time) / double(numberGeneratedSignals) * 100
+             << "%.\n" << std::endl;
 
-    file << "Full localization time: " << args.experimentResults[args.scenedIndex].duration << " milliseconds.\n";
-    file << "Mean localization time of a signal: "
-         << args.experimentResults[args.scenedIndex].duration / numberGeneratedSignals << " milliseconds.\n"
-         << std::endl;
+        file << "Full localization time: " << args.experimentResults[args.scenedIndex].grid->duration
+             << " milliseconds.\n";
+        file << "Mean localization time of a signal: "
+             << args.experimentResults[args.scenedIndex].grid->duration / numberGeneratedSignals << " milliseconds.\n"
+             << std::endl;
+    }
 
     file.close();
+}
+
+/** Create new directory if it necessary */
+std::string createDir(std::string path, const std::string& dirName) {
+    path += (dirName + std::string(1, std::filesystem::path::preferred_separator));
+    std::filesystem::path dir(path);
+    if (!std::filesystem::exists(dir)) {
+        std::filesystem::create_directory(dir);
+    }
+    return path;
+}
+
+/** Save attempts localization all signals for a scene */
+void saveSignalsReports(const ParametersForSave& args) {
+    if (args.experimentDescription.type != ExperimentDescription::Type::Signal &&
+        args.experimentDescription.type != ExperimentDescription::Type::GridAndSignal) {
+        return;
+    }
+
+    auto& signalsResult = args.experimentResults[args.scenedIndex].signal;
+    for (unsigned int signalIndex = 0; signalIndex < signalsResult.size(); signalIndex++) {
+        std::string outPath = args.outPath + std::string(1, std::filesystem::path::preferred_separator);
+        if (signalsResult.size() > 1) {
+            outPath = createDir(outPath, "Signal" + std::to_string(signalIndex));
+        }
+
+        /** Saving detected signals */
+        const std::string outFileName = outPath + "LocalizedSignals.dat";
+        std::ofstream file(outFileName);
+        if (!file.is_open()) {
+            throw std::invalid_argument("Can't open " + outFileName + ".");
+        }
+
+        file << "\"x\", \"y\", \"time\"" << std::endl;
+
+        for(const auto& signal : signalsResult[signalIndex].detected) {
+            file << signal.x << " " << signal.y << " " << signal.time << std::endl;
+        }
+
+        file.close();
+    }
+}
+
+/** Save attempts localization all signals for a scene in grid */
+void saveSignalsInGrid(const ParametersForSave& args) {
+    Grid grid(GridProtocol::Size{args.experimentDescription.gridSize.width,
+                                 args.experimentDescription.gridSize.height});
+    for (unsigned int x = 0; x < grid.size().width; x++) {
+        for (unsigned int y = 0; y < grid.size().height; y++) {
+            grid(x, y) = 0;
+        }
+    }
+
+    auto &scene = args.experimentDescription.scenes[args.scenedIndex];
+    const pl::Point<> step = {(scene.bound.max.x - scene.bound.min.x) / args.experimentDescription.gridSize.width,
+                              (scene.bound.max.y - scene.bound.min.y) / args.experimentDescription.gridSize.height};
+
+    auto &signalsResult = args.experimentResults[args.scenedIndex].signal;
+    bool wasSignal = false;
+    for (unsigned int signalIndex = 0; signalIndex < signalsResult.size(); signalIndex++) {
+        for (const auto &point : signalsResult[signalIndex].detected) {
+            const pl::Point<int> unit = {
+                    int(ceil((point.x - scene.bound.min.x) / step.x)),
+                    int(ceil((point.y - scene.bound.min.y) / step.y))
+            };
+            if (unit.x >= 0 && unit.y >= 0 && unit.x < grid.size().width && unit.y < grid.size().height) {
+                grid(unit.x, unit.y) += 1;
+                wasSignal = true;
+            }
+        }
+    }
+
+    if (wasSignal) {
+        saveGridInTextGrdFormat(grid, scene.bound.min, scene.bound.max, args.outPath + "SignalsGrid.grd");
+    }
 }
 
 void makeReport(const ExperimentDescription& experimentDescription,
@@ -221,15 +331,8 @@ void makeReport(const ExperimentDescription& experimentDescription,
 
     for (unsigned int sceneIndex = 0; sceneIndex < experimentResults.size(); sceneIndex++) {
         std::string outPath = reportDescription.outPath + std::string(1, std::filesystem::path::preferred_separator);
-
-        /** Create directories with reports */
         if (experimentResults.size() > 1) {
-            outPath += ("Scene" + std::to_string(sceneIndex) +
-                        std::string(1, std::filesystem::path::preferred_separator));
-            std::filesystem::path dir(outPath);
-            if (!std::filesystem::exists(dir)) {
-                std::filesystem::create_directory(dir);
-            }
+            outPath = createDir(outPath, "Scene" + std::to_string(sceneIndex));
         }
 
         ParametersForSave dataSaving = {experimentDescription, experimentResults, sceneIndex, outPath};
@@ -245,5 +348,8 @@ void makeReport(const ExperimentDescription& experimentDescription,
         if (reportDescription.useTextDescription) {
             saveTextReport(dataSaving);
         }
+
+        saveSignalsReports(dataSaving);
+        saveSignalsInGrid(dataSaving);
     }
 }

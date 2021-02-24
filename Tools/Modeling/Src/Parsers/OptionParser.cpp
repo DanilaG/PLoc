@@ -1,18 +1,31 @@
 #include "OptionParser.h"
 
-#include <iostream>
 #include <fstream>
+#include <unordered_map>
+
+#include <magic_enum.hpp>
 
 #include "ExperimentJsonParser.h"
 
 namespace opt_names {
     const std::string experiment = "experiment";
     const std::string out = "out";
+    const std::string experimentType = "type";
     const std::string time = "time";
     const std::string distance = "distance";
     const std::string textReport = "text_report";
     const std::string help = "help";
 };
+
+std::string allPossibleValuesExperimentType() {
+    auto colorNames = magic_enum::enum_names<ExperimentDescription::Type>();
+    std::string answer;
+    for (auto& name : colorNames) {
+        answer += ("\"" + std::string(name) + "\" ");
+    }
+    answer.pop_back();
+    return answer;
+}
 
 void OptionParser::init() {
     if (!isWasInited) {
@@ -26,6 +39,13 @@ void OptionParser::init() {
                         "o," + opt_names::out,
                         "Output path.",
                         cxxopts::value<std::string>()->default_value("")
+                )
+                (
+                        opt_names::experimentType,
+                        "Type of an experiment. Possible values: " + allPossibleValuesExperimentType() + ".",
+                        cxxopts::value<std::string>()->default_value(
+                                    std::string(magic_enum::enum_name(ExperimentDescription::Type::GridAndSignal))
+                                )
                 )
                 (
                         "t," + opt_names::time,
@@ -74,6 +94,13 @@ OptionParser::Result OptionParser::pars(int argc, char** argv) {
     nlohmann::json json;
     inFile >> json;
     ExperimentDescription experiment = getExperimentDescription(json);
+
+    auto experimentType =
+            magic_enum::enum_cast<ExperimentDescription::Type>(result[opt_names::experimentType].as<std::string>());
+    if (!experimentType.has_value()) {
+        throw std::invalid_argument("Wrong experiment type. Possible types: " + allPossibleValuesExperimentType() + ".");
+    }
+    experiment.type = experimentType.value();
 
     return Result(std::pair<ExperimentDescription, ReportDescription>(experiment, report));
 }
