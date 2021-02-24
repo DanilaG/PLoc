@@ -288,8 +288,8 @@ void saveSignalsReports(const ParametersForSave& args) {
 
 /** Save attempts localization all signals for a scene in grid */
 void saveSignalsInGrid(const ParametersForSave& args) {
-    Grid grid(GridProtocol::Size{args.experimentDescription.gridSize.width,
-                                 args.experimentDescription.gridSize.height});
+    Grid grid(GridProtocol::Size{args.experimentDescription.signalGridSize.width,
+                                 args.experimentDescription.signalGridSize.height});
     for (unsigned int x = 0; x < grid.size().width; x++) {
         for (unsigned int y = 0; y < grid.size().height; y++) {
             grid(x, y) = 0;
@@ -297,8 +297,10 @@ void saveSignalsInGrid(const ParametersForSave& args) {
     }
 
     auto &scene = args.experimentDescription.scenes[args.scenedIndex];
-    const pl::Point<> step = {(scene.bound.max.x - scene.bound.min.x) / args.experimentDescription.gridSize.width,
-                              (scene.bound.max.y - scene.bound.min.y) / args.experimentDescription.gridSize.height};
+    const pl::Point<> step = {
+            (scene.bound.max.x - scene.bound.min.x) / args.experimentDescription.signalGridSize.width,
+            (scene.bound.max.y - scene.bound.min.y) / args.experimentDescription.signalGridSize.height
+    };
 
     auto &signalsResult = args.experimentResults[args.scenedIndex].signal;
     bool wasSignal = false;

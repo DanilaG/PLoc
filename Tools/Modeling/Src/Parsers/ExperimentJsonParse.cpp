@@ -9,6 +9,7 @@ namespace json_param_name {
     namespace experiment {
         const std::string scenes = "scenes";
         const std::string grid = "grid";
+        const std::string signalGrid = "signal_grid";
         const std::string gridWidth = "width";
         const std::string gridHeight = "height";
         const std::string numberAttemptsInNode = "number_attempts";
@@ -146,6 +147,11 @@ T getEnumFromJson(nlohmann::json& json, const std::string& paramName) {
     return optionalValue.value();
 }
 
+ExperimentDescription::GridSize getGrid(nlohmann::json& json) {
+    return { json.at(json_param_name::experiment::gridWidth).get<unsigned int>(),
+             json.at(json_param_name::experiment::gridHeight).get<unsigned int>() };
+};
+
 ExperimentDescription getExperimentDescription(nlohmann::json& json) {
     ExperimentDescription experiment;
 
@@ -153,10 +159,11 @@ ExperimentDescription getExperimentDescription(nlohmann::json& json) {
         /** Scenes */
         experiment.scenes = getScenes(json.at(json_param_name::experiment::scenes));
 
-        /** Grid */
-        auto jsonGrid = json.at(json_param_name::experiment::grid);
-        experiment.gridSize.width = jsonGrid.at(json_param_name::experiment::gridWidth).get<unsigned int>();
-        experiment.gridSize.height = jsonGrid.at(json_param_name::experiment::gridHeight).get<unsigned int>();
+        /** Grids */
+        experiment.gridSize = getGrid(json.at(json_param_name::experiment::grid));
+        experiment.signalGridSize = json.contains(json_param_name::experiment::signalGrid) ?
+                                    getGrid(json.at(json_param_name::experiment::signalGrid)) :
+                                    experiment.gridSize;
 
         /** Attempts */
         experiment.numberAttempts = json.at(json_param_name::experiment::numberAttemptsInNode).get<unsigned int>();

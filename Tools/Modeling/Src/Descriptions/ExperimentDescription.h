@@ -105,7 +105,12 @@ struct ExperimentDescription {
     Type type = Type::GridAndSignal;
 
     std::vector<Scene> scenes;
+
+    /** Size scene grid */
     GridSize gridSize;
+
+    /** Grid for signal localization type of an experiment */
+    GridSize signalGridSize;
 
     /** Number of attempts experiments in each signal / node */
     unsigned int numberAttempts;
