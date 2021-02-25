@@ -55,17 +55,33 @@ std::pair<double, double> minMax(const GridProtocol& grid) {
 }
 
 
-/** Save detectors location in DAT format according:
+/** Save Points in DAT format according:
   * http://grapherhelp.goldensoftware.com/WTOPICS/TOP_ASCIIFILES.htm */
-void saveDetectorsInDatFormat(const std::vector<pl::Point<>>& detectors, const std::string& outFileName) {
+void savePointsInDatFormat(const std::vector<pl::Point<>>& points, const std::string& outFileName) {
     std::ofstream file(outFileName);
     if (!file.is_open()) {
         throw std::invalid_argument("Can't open " + outFileName + ".");
     }
 
     file << "\"x\", \"y\"" << std::endl;
-    for (const auto& detector: detectors) {
-        file << detector.x << ", " << detector.y << std::endl;
+    for (const auto& point: points) {
+        file << point.x << ", " << point.y << std::endl;
+    }
+
+    file.close();
+}
+
+/** Save TimePoints in DAT format according:
+  * http://grapherhelp.goldensoftware.com/WTOPICS/TOP_ASCIIFILES.htm */
+void saveTimePointsInDatFormat(const std::vector<pl::TimePoint<>>& signals, const std::string& outFileName) {
+    std::ofstream file(outFileName);
+    if (!file.is_open()) {
+        throw std::invalid_argument("Can't open " + outFileName + ".");
+    }
+
+    file << "\"x\", \"y\", \"time\"" << std::endl;
+    for(const auto& signal : signals) {
+        file << signal.x << " " << signal.y << " " << signal.time << std::endl;
     }
 
     file.close();
@@ -255,22 +271,6 @@ std::string createDir(std::string path, const std::string& dirName) {
     return path;
 }
 
-/** Save localized signals */
-void saveLocalizedSignals(const SignalExperimentResult& result, const std::string& outFileName) {
-    std::ofstream file(outFileName);
-    if (!file.is_open()) {
-        throw std::invalid_argument("Can't open " + outFileName + ".");
-    }
-
-    file << "\"x\", \"y\", \"time\"" << std::endl;
-
-    for(const auto& signal : result.detected) {
-        file << signal.x << " " << signal.y << " " << signal.time << std::endl;
-    }
-
-    file.close();
-}
-
 /** Save grid scatter of localized signal */
 void saveSignalGrid(const SignalExperimentResult& result,
                     const ExperimentDescription::GridSize& signalGridSize,
@@ -321,7 +321,9 @@ void makeLocalizedSignalsReport(const ParametersForSave& args) {
             outPath = createDir(outPath, "Signal" + std::to_string(signalIndex));
         }
 
-        saveLocalizedSignals(signalsResult[signalIndex], outPath + "LocalizedSignals.dat");
+        savePointsInDatFormat({args.experimentDescription.scenes[args.scenedIndex].signals[signalIndex]},
+                              outPath + "Signal.dat");
+        saveTimePointsInDatFormat(signalsResult[signalIndex].detected, outPath + "LocalizedSignals.dat");
         saveSignalGrid(signalsResult[signalIndex],
                        args.experimentDescription.signalGridSize,
                        outPath + "LocalizedSignalsGrid.dat");
@@ -350,7 +352,7 @@ void makeReport(const ExperimentDescription& experimentDescription,
         }
 
         if (!reportDescription.measurers.empty()) {
-            saveDetectorsInDatFormat(experimentDescription.scenes[sceneIndex].detectors, outPath + "Detectors.dat");
+            savePointsInDatFormat(experimentDescription.scenes[sceneIndex].detectors, outPath + "Detectors.dat");
         }
 
         if (reportDescription.useTextDescription) {
