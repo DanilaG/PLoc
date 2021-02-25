@@ -255,8 +255,60 @@ std::string createDir(std::string path, const std::string& dirName) {
     return path;
 }
 
-/** Save attempts localization all signals for a scene */
-void saveSignalsReports(const ParametersForSave& args) {
+/** Save localized signals */
+void saveLocalizedSignals(const SignalExperimentResult& result, const std::string& outFileName) {
+    std::ofstream file(outFileName);
+    if (!file.is_open()) {
+        throw std::invalid_argument("Can't open " + outFileName + ".");
+    }
+
+    file << "\"x\", \"y\", \"time\"" << std::endl;
+
+    for(const auto& signal : result.detected) {
+        file << signal.x << " " << signal.y << " " << signal.time << std::endl;
+    }
+
+    file.close();
+}
+
+/** Save grid scatter of localized signal */
+void saveSignalGrid(const SignalExperimentResult& result,
+                    const ExperimentDescription::GridSize& signalGridSize,
+                    const std::string& outFileName) {
+    if (!result.detected.empty()) {
+        pl::Point<> min = result.detected.front();
+        pl::Point<> max = result.detected.front();
+        for (const auto& localization : result.detected) {
+            min.x = std::min(min.x, localization.x);
+            min.y = std::min(min.y, localization.y);
+            max.x = std::max(max.x, localization.x);
+            max.y = std::max(max.y, localization.y);
+        }
+
+        Grid grid(GridProtocol::Size{signalGridSize.width, signalGridSize.height});
+        const pl::Point<> step = {(max.x - min.x) / (signalGridSize.width - 1),
+                                  (max.y - min.y) / (signalGridSize.height - 1)};
+
+        for (unsigned int x = 0; x < grid.size().width; x++) {
+            for (unsigned int y = 0; y < grid.size().height; y++) {
+                grid(x, y) = 0;
+            }
+        }
+
+        for (const auto& localization : result.detected) {
+            const pl::Point<int> unit = {
+                    int(ceil((localization.x - min.x) / step.x)),
+                    int(ceil((localization.y - min.y) / step.y))
+            };
+            grid(unit.x, unit.y) += 1;
+        }
+
+        saveGridInTextGrdFormat(grid, min, max, outFileName);
+    }
+}
+
+/** Make localized signals report of a experiment */
+void makeLocalizedSignalsReport(const ParametersForSave& args) {
     if (args.experimentDescription.type != ExperimentDescription::Type::Signal &&
         args.experimentDescription.type != ExperimentDescription::Type::GridAndSignal) {
         return;
@@ -269,56 +321,10 @@ void saveSignalsReports(const ParametersForSave& args) {
             outPath = createDir(outPath, "Signal" + std::to_string(signalIndex));
         }
 
-        /** Saving detected signals */
-        const std::string outFileName = outPath + "LocalizedSignals.dat";
-        std::ofstream file(outFileName);
-        if (!file.is_open()) {
-            throw std::invalid_argument("Can't open " + outFileName + ".");
-        }
-
-        file << "\"x\", \"y\", \"time\"" << std::endl;
-
-        for(const auto& signal : signalsResult[signalIndex].detected) {
-            file << signal.x << " " << signal.y << " " << signal.time << std::endl;
-        }
-
-        file.close();
-    }
-}
-
-/** Save attempts localization all signals for a scene in grid */
-void saveSignalsInGrid(const ParametersForSave& args) {
-    Grid grid(GridProtocol::Size{args.experimentDescription.signalGridSize.width,
-                                 args.experimentDescription.signalGridSize.height});
-    for (unsigned int x = 0; x < grid.size().width; x++) {
-        for (unsigned int y = 0; y < grid.size().height; y++) {
-            grid(x, y) = 0;
-        }
-    }
-
-    auto &scene = args.experimentDescription.scenes[args.scenedIndex];
-    const pl::Point<> step = {
-            (scene.bound.max.x - scene.bound.min.x) / args.experimentDescription.signalGridSize.width,
-            (scene.bound.max.y - scene.bound.min.y) / args.experimentDescription.signalGridSize.height
-    };
-
-    auto &signalsResult = args.experimentResults[args.scenedIndex].signal;
-    bool wasSignal = false;
-    for (unsigned int signalIndex = 0; signalIndex < signalsResult.size(); signalIndex++) {
-        for (const auto &point : signalsResult[signalIndex].detected) {
-            const pl::Point<int> unit = {
-                    int(ceil((point.x - scene.bound.min.x) / step.x)),
-                    int(ceil((point.y - scene.bound.min.y) / step.y))
-            };
-            if (unit.x >= 0 && unit.y >= 0 && unit.x < grid.size().width && unit.y < grid.size().height) {
-                grid(unit.x, unit.y) += 1;
-                wasSignal = true;
-            }
-        }
-    }
-
-    if (wasSignal) {
-        saveGridInTextGrdFormat(grid, scene.bound.min, scene.bound.max, args.outPath + "SignalsGrid.grd");
+        saveLocalizedSignals(signalsResult[signalIndex], outPath + "LocalizedSignals.dat");
+        saveSignalGrid(signalsResult[signalIndex],
+                       args.experimentDescription.signalGridSize,
+                       outPath + "LocalizedSignalsGrid.dat");
     }
 }
 
@@ -351,7 +357,6 @@ void makeReport(const ExperimentDescription& experimentDescription,
             saveTextReport(dataSaving);
         }
 
-        saveSignalsReports(dataSaving);
-        saveSignalsInGrid(dataSaving);
+        makeLocalizedSignalsReport(dataSaving);
     }
 }
