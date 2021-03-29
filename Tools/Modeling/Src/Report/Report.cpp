@@ -323,7 +323,7 @@ void makeLocalizedSignalsReport(const ParametersForSave& args) {
 
         savePointsInDatFormat({args.experimentDescription.scenes[args.scenedIndex].signals[signalIndex]},
                               outPath + "Signal.dat");
-        saveTimePointsInDatFormat(signalsResult[signalIndex].detected, outPath + "LocalizedSignals.dat");
+        saveTimePointsInDatFormat(signalsResult[signalIndex].detected, outPath + "LocalizedSignals.grd");
         saveSignalGrid(signalsResult[signalIndex],
                        args.experimentDescription.signalGridSize,
                        outPath + "LocalizedSignalsGrid.dat");
