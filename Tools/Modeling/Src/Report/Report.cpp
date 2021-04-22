@@ -81,7 +81,7 @@ void saveTimePointsInDatFormat(const std::vector<pl::TimePoint<>>& signals, cons
 
     file << "\"x\", \"y\", \"time\"" << std::endl;
     for(const auto& signal : signals) {
-        file << signal.x << " " << signal.y << " " << signal.time << std::endl;
+        file << signal.x << ", " << signal.y << ", " << signal.time << std::endl;
     }
 
     file.close();
