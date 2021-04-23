@@ -1,7 +1,7 @@
-from argparse import ArgumentParser
 import numpy as np
 import matplotlib.pyplot as plt
-import re
+from argparse import ArgumentParser
+from Src.Lightning import *
 
 parser = ArgumentParser()
 parser.add_argument("-l", "--lightning", dest="in_file_name",
@@ -11,10 +11,8 @@ parser.add_argument("-o", "--out", dest="out_file_name", default="out.png",
                     help="input file with lightning coordinates", metavar="OUT_FILE")
 args = parser.parse_args()
 
-f = open(args.in_file_name, "r")
-number_input_parameters = 3
-times = list(map(float, re.split('[\n ]', f.read())[2 * number_input_parameters - 1::3]))
-f.close()
+lightnings = read(args.in_file_name)
+times = list(map(lambda lightning: lightning.time, lightnings))
 
 hist, bin_edges = np.histogram(times, bins=args.number_columns)
 plt.rc('axes', axisbelow=True)
