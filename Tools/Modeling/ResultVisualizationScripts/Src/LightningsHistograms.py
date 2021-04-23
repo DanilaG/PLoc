@@ -18,7 +18,7 @@ class HistogramMaker:
 
         data = self.__get_data__()
 
-        hist, bin_edges = np.histogram(data, bins=number_columns)
+        hist, bin_edges = np.histogram(data + [0.0], bins=number_columns)
         plt.rc('axes', axisbelow=True)
         plt.xticks(bin_edges, rotation='vertical')
         plt.subplots_adjust(bottom=0.27)
