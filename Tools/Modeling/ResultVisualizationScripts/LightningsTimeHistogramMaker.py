@@ -1,7 +1,16 @@
-import numpy as np
-import matplotlib.pyplot as plt
 from argparse import ArgumentParser
-from Src.Lightning import *
+from Src.LightningsHistograms import *
+
+
+class TimeHistogramMaker(HistogramMaker):
+    def __init__(self):
+        super().__init__()
+        self.xlabel = 'мкс'
+
+
+    def __get_data__(self):
+        return list(map(lambda lightning: lightning.time, self.lightnings))
+
 
 parser = ArgumentParser()
 parser.add_argument("-l", "--lightning", dest="in_file_name",
@@ -11,18 +20,5 @@ parser.add_argument("-o", "--out", dest="out_file_name", default="out.png",
                     help="input file with lightning coordinates", metavar="OUT_FILE")
 args = parser.parse_args()
 
-lightnings = read(args.in_file_name)
-times = list(map(lambda lightning: lightning.time, lightnings))
-
-hist, bin_edges = np.histogram(times, bins=args.number_columns)
-plt.rc('axes', axisbelow=True)
-plt.xticks(bin_edges, rotation='vertical')
-plt.subplots_adjust(bottom=0.27)
-plt.xlabel('мкс')
-plt.grid(axis='y')
-plt.hist(times, bins=bin_edges, color=[(69 / 255, 117 / 255, 180 / 255)], edgecolor='black', linewidth=1.2)
-plt.axvline(x=np.mean(times), color='red')
-plt.axvline(x=np.median(times), color='orange')
-plt.gcf().set_size_inches(9, 6.5)
-plt.subplots_adjust(top=0.96, right=0.96, left=0.075, bottom=0.175)
-plt.savefig(args.out_file_name)
+histogram_maker = TimeHistogramMaker()
+histogram_maker.make(args.in_file_name, args.out_file_name, args.number_columns)
