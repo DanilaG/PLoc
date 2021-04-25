@@ -59,6 +59,7 @@ k_b = math.sqrt(0.5 * (v_x + v_y - b))
 c = 2 * math.log(1 / (1 - 0.9))
 
 # Plotting
+plt.rcParams.update({'font.size': 12})
 for lightning in lightnings:
     plt.plot(lightning.x, lightning.y, "o", color='black')
 plt.plot(0.0, 0.0, "o", color='red', zorder=len(lightnings) + 1)
@@ -79,5 +80,5 @@ plt.gcf().set_size_inches(6.5, 6.5)
 plt.grid()
 plt.xlabel('км')
 plt.ylabel('км')
-plt.subplots_adjust(top=0.96, right=0.96, left=0.125, bottom=0.125)
+plt.subplots_adjust(top=0.96, right=0.96, left=0.15, bottom=0.15)
 plt.savefig(args.out_file_name)
