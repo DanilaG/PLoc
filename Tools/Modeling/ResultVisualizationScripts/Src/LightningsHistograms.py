@@ -28,6 +28,6 @@ class HistogramMaker:
         plt.hist(data, bins=bin_edges, color=[(69 / 255, 117 / 255, 180 / 255)], edgecolor='black', linewidth=1.2)
         plt.axvline(x=np.mean(data), color='red')
         plt.axvline(x=np.median(data), color='orange')
-        plt.gcf().set_size_inches(13, 6.5)
-        plt.subplots_adjust(top=0.96, right=0.96, left=0.05, bottom=0.19)
+        plt.gcf().set_size_inches(8, 5)
+        plt.subplots_adjust(top=0.96, right=0.96, left=0.075, bottom=0.25)
         plt.savefig(out_file_name)
