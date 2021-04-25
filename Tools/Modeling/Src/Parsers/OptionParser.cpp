@@ -18,9 +18,9 @@ namespace opt_names {
 };
 
 std::string allPossibleValuesExperimentType() {
-    auto colorNames = magic_enum::enum_names<ExperimentDescription::Type>();
+    auto names = magic_enum::enum_names<ExperimentDescription::Type>();
     std::string answer;
-    for (auto& name : colorNames) {
+    for (auto& name : names) {
         answer += ("\"" + std::string(name) + "\" ");
     }
     answer.pop_back();
