@@ -17,7 +17,6 @@ public:
 private:
     TimePoint<> mean_ = {0, 0, 0};
     TimePoint<unsigned int, unsigned int> numberOfAddedCoordinates_ = {0, 0, 0};
-    bool isHasValue_ = false;
 
     static void updateMean(double& mean, double added, unsigned int& counter);
 };
