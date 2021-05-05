@@ -1,28 +1,25 @@
 #include "MeanCombiner.h"
 
 namespace pl {
-void MeanCombiner::add(const TimePoint<>& newPoint) {
-    updateMean(mean_.x, newPoint.x, numberOfAddedCoordinates_.x);
-    updateMean(mean_.y, newPoint.y, numberOfAddedCoordinates_.y);
-    updateMean(mean_.time, newPoint.time, numberOfAddedCoordinates_.time);
+void MeanCombiner::MeanDataCombiner::add(double value) {
+    mean_ = (mean_ * counter_ + value) / static_cast<double>(counter_ + 1);
+    counter_++;
 }
 
-std::optional<TimePoint<>> MeanCombiner::result() {
-    return numberOfAddedCoordinates_.x > 0 && numberOfAddedCoordinates_.y > 0 && numberOfAddedCoordinates_.time > 0 ?
-           std::optional<TimePoint<>>(mean_) : std::nullopt;
-}
-
-
-void MeanCombiner::reset() {
-    mean_ = {0, 0, 0};
-    numberOfAddedCoordinates_ = {0, 0, 0};
-}
-
-void MeanCombiner::updateMean(double& mean, double added, unsigned int& counter) {
-    if (!isnan(added)) {
-        mean = (mean * counter + added) / static_cast<double>(counter + 1);
-        counter++;
+std::optional<double> MeanCombiner::MeanDataCombiner::get() {
+    if (counter_ <= 0) {
+        return std::nullopt;
     }
+
+    return mean_;
 }
 
+bool MeanCombiner::MeanDataCombiner::hasValue() {
+    return counter_ > 0;
+}
+
+void MeanCombiner::MeanDataCombiner::reset() {
+    mean_ = 0;
+    counter_ = 0;
+}
 }

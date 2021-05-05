@@ -1,39 +1,35 @@
 #ifndef PLOC_FILTEREDMEANCOMBINER_H
 #define PLOC_FILTEREDMEANCOMBINER_H
 
-#include "Combiner.h"
+#include "ParallelCombiner.h"
 
 #include <vector>
 
 namespace pl {
-class FilteredMeanCombiner: public Combiner {
+class FilteredMeanCombiner: public ParallelCombiner {
 public:
-    void add(const TimePoint<>&) final;
+    FilteredMeanCombiner(): ParallelCombiner(std::make_shared<FilteredMeanDataCombiner>(),
+                                             std::make_shared<FilteredMeanDataCombiner>(),
+                                             std::make_shared<FilteredMeanDataCombiner>()) {}
 
-    std::optional<TimePoint<>> result() final;
-
-    void reset() final;
-
-    ~FilteredMeanCombiner() {}
-
-private:
-    class FilteredData {
+protected:
+    class FilteredMeanDataCombiner: public DataCombiner {
     public:
-        void add(double);
-        std::optional<double> get();
-        void reset();
+        void add(double) final;
 
-        bool hasValue();
+        std::optional<double> get() final;
+
+        bool hasValue() final;
+
+        void reset() final;
+
+        ~FilteredMeanDataCombiner() {}
 
         const double left_percent_border = 0.1;
         const double right_percent_border = 0.1;
-
     private:
         std::vector<double> data_;
     };
-    FilteredData x_;
-    FilteredData y_;
-    FilteredData time_;
 };
 }
 

@@ -4,15 +4,15 @@
 #include <cmath>
 
 namespace pl {
-    void FilteredMeanCombiner::FilteredData::add(double value) {
+    void FilteredMeanCombiner::FilteredMeanDataCombiner::add(double value) {
         data_.push_back(value);
     }
 
-    bool FilteredMeanCombiner::FilteredData::hasValue() {
+    bool FilteredMeanCombiner::FilteredMeanDataCombiner::hasValue() {
         return !data_.empty();
     }
 
-    std::optional<double> FilteredMeanCombiner::FilteredData::get() {
+    std::optional<double> FilteredMeanCombiner::FilteredMeanDataCombiner::get() {
         if (!hasValue()) {
             return std::nullopt;
         }
@@ -33,27 +33,7 @@ namespace pl {
         return mean / (right_border - left_border);
     }
 
-    void FilteredMeanCombiner::FilteredData::reset() {
+    void FilteredMeanCombiner::FilteredMeanDataCombiner::reset() {
         data_ = std::vector<double>();
-    }
-
-    void FilteredMeanCombiner::add(const TimePoint<>& point) {
-        x_.add(point.x);
-        y_.add(point.y);
-        time_.add(point.time);
-    }
-
-    std::optional<TimePoint<>> FilteredMeanCombiner::result() {
-        if (!x_.hasValue() || !y_.hasValue() || !time_.hasValue()) {
-            return std::nullopt;
-        }
-
-        return TimePoint<>(x_.get().value(), y_.get().value(), time_.get().value());
-    }
-
-    void FilteredMeanCombiner::reset() {
-        x_.reset();
-        y_.reset();
-        time_.reset();
     }
 }
