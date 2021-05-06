@@ -1,25 +1,31 @@
 #ifndef PLOC_MEANCOMBINER_H
 #define PLOC_MEANCOMBINER_H
 
-#include "Combiner.h"
+#include "ParallelCombiner.h"
 
 namespace pl {
-class MeanCombiner: public Combiner {
+class MeanCombiner: public ParallelCombiner {
 public:
-    void add(const TimePoint<>&) final;
+    MeanCombiner(): ParallelCombiner(std::make_shared<MeanDataCombiner>(),
+                                     std::make_shared<MeanDataCombiner>(),
+                                     std::make_shared<MeanDataCombiner>()) {}
 
-    std::optional<TimePoint<>> result() final;
+protected:
+    class MeanDataCombiner: public DataCombiner {
+    public:
+        void add(double) final;
 
-    void reset() final;
+        std::optional<double> get() final;
 
-    ~MeanCombiner() {}
+        bool hasValue() final;
 
-private:
-    TimePoint<> mean_ = {0, 0, 0};
-    TimePoint<unsigned int, unsigned int> numberOfAddedCoordinates_ = {0, 0, 0};
-    bool isHasValue_ = false;
+        void reset() final;
 
-    static void updateMean(double& mean, double added, unsigned int& counter);
+        ~MeanDataCombiner() {}
+    private:
+        double mean_ = 0;
+        unsigned int counter_ = 0;
+    };
 };
 
 }
