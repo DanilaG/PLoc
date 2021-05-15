@@ -90,7 +90,9 @@ struct ExperimentDescription {
 
     /** Type of combiner algorithm */
     enum class CombinerType {
-        Mean
+        Mean,
+        FilteredMean,
+        Median
     };
 
     /** Scene area sampling grid */

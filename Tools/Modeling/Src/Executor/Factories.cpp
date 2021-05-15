@@ -33,6 +33,14 @@ std::shared_ptr<pl::Combiner> combinerFactory(const ExperimentDescription::Combi
             {
                 ExperimentDescription::CombinerType::Mean,
                 [](){ return std::static_pointer_cast<pl::Combiner>(std::make_shared<pl::MeanCombiner>()); }
+            },
+            {
+                    ExperimentDescription::CombinerType::FilteredMean,
+                    [](){ return std::static_pointer_cast<pl::Combiner>(std::make_shared<pl::FilteredMeanCombiner>()); }
+            },
+            {
+                    ExperimentDescription::CombinerType::Median,
+                    [](){ return std::static_pointer_cast<pl::Combiner>(std::make_shared<pl::MedianCombiner>()); }
             }
     };
 
