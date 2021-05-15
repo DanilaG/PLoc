@@ -1,5 +1,9 @@
 #include "TestTools.h"
+
 #include "Localization/Localization.h"
+#include "Localization/Combiner/FilteredMeanCombiner.h"
+#include "Localization/Combiner/MeanCombiner.h"
+#include "Localization/Combiner/MedianCombiner.h"
 
 TEST(DIRECT_DETECT, IN_TRIANGLE){
     LOCALIZATION_RESULT_EQ(pl::localizationByDirectMethod({{-5, -5, 15.640312423743286},
@@ -101,14 +105,6 @@ TEST(VECTOR_DETECT, FOUR_DETECTORS){
                                                           2),
                            pl::TimePoint<>(0, 4, 3))}
 
-TEST(QUAD_DETECT, UNDEFINED){
-    LOCALIZATION_RESULT_EQ(pl::localizationByQuadrangleMethod({{-5, -5, 11.781024967590666},
-                                                               {-5, 5,  11.640312423743286},
-                                                               {5,  5,  11.640312423743286},
-                                                               {5,  -5, 11.781024967590666}},
-                                                              10),
-                           std::nullopt)}
-
 TEST(QUAD_DETECT, IN_QUAD) {
     LOCALIZATION_RESULT_EQ(pl::localizationByQuadrangleMethod({{-5, -5, 11.781024967590666},
                                                                {-5, 5,  11.640312423743286},
@@ -162,4 +158,68 @@ TEST(QUAD_DETECT, FIVE_DETECTORS) {
                                                                {7,  6,  5.353553390593274}},
                                                               4),
                            pl::TimePoint<>(6, 7, 5));
+}
+
+TEST(MEAN_COMBINER, INHERITANCE) {
+    pl::MeanCombiner combiner;
+    EXPECT_FALSE(combiner.result().has_value());
+    combiner.add(pl::TimePoint<>(1, 1, 1));
+    EXPECT_TRUE(combiner.result().has_value());
+    combiner.reset();
+    EXPECT_FALSE(combiner.result().has_value());
+    combiner.add(pl::TimePoint<>(1, 1, 1));
+    EXPECT_TRUE(combiner.result().has_value());
+    LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 1, 1));
+}
+
+TEST(MEAN_COMBINER, MULTY) {
+    pl::MeanCombiner combiner;
+    combiner.add(pl::TimePoint<>(1, 0, 0));
+    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(5, 1, 2));
+    combiner.add(pl::TimePoint<>(1, 0, 3));
+    LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(2, 0.5, 1.5));
+}
+
+TEST(MEDIAN_COMBINER, INHERITANCE) {
+    pl::MedianCombiner combiner;
+    EXPECT_FALSE(combiner.result().has_value());
+    combiner.add(pl::TimePoint<>(1, 1, 1));
+    EXPECT_TRUE(combiner.result().has_value());
+    combiner.reset();
+    EXPECT_FALSE(combiner.result().has_value());
+    combiner.add(pl::TimePoint<>(1, 1, 1));
+    EXPECT_TRUE(combiner.result().has_value());
+    LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 1, 1));
+}
+
+TEST(MEDIAN_COMBINER, MULTY) {
+    pl::MedianCombiner combiner;
+    combiner.add(pl::TimePoint<>(1, 0, 0));
+    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(5, 1, 2));
+    combiner.add(pl::TimePoint<>(1, 0, 3));
+    LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 1, 2));
+}
+
+TEST(FILTERED_MEAN_COMBINER, INHERITANCE) {
+    pl::FilteredMeanCombiner combiner;
+    EXPECT_FALSE(combiner.result().has_value());
+    combiner.add(pl::TimePoint<>(1, 1, 1));
+    EXPECT_TRUE(combiner.result().has_value());
+    combiner.reset();
+    EXPECT_FALSE(combiner.result().has_value());
+    combiner.add(pl::TimePoint<>(1, 1, 1));
+    EXPECT_TRUE(combiner.result().has_value());
+    LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 1, 1));
+}
+
+TEST(FILTERED_MEAN_COMBINER, MULTY) {
+    pl::FilteredMeanCombiner combiner;
+    combiner.add(pl::TimePoint<>(1, 0, 0));
+    combiner.add(pl::TimePoint<>(1, 1, 1));
+    LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 0.5, 0.5));
+    combiner.add(pl::TimePoint<>(5, 1, 2));
+    combiner.add(pl::TimePoint<>(1, 0, 3));
+    LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 0.5, 1.5));
 }
