@@ -105,7 +105,10 @@ std::vector<Scene> getScenes(nlohmann::json& json) {
 };
 
 std::shared_ptr<ErrorGeneratorDescription> getLinearRandomGenerator(nlohmann::json& json) {
-    bool isRelativeErrors = json.at(json_param_name::error_gen::isRelativeErrors).get<bool>();
+    bool isRelativeErrors = false;
+    if (json.contains(json_param_name::error_gen::isRelativeErrors)) {
+        json.at(json_param_name::error_gen::isRelativeErrors).get<bool>();
+    }
     auto data = std::make_shared<LinearErrorGeneratorDescription>(isRelativeErrors);
     data->maxValue = json.at(json_param_name::error_gen::linear_distrib::maxValue).get<double>();
     data->minValue = json.at(json_param_name::error_gen::linear_distrib::minValue).get<double>();
