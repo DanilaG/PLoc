@@ -29,14 +29,14 @@ namespace pl {
                                                               double c,
                                                               Combiner& combiner);
 
-    std::optional<TimePoint<>> localizationByVectorMethod(const TimePoint<>& p0,
-                                                          TimePoint<> p1,
-                                                          TimePoint<> p2,
-                                                          double c);
-    std::optional<TimePoint<>> localizationByVectorMethod(const std::vector<TimePoint<>>& data, double c);
-    std::optional<TimePoint<>> localizationByVectorMethod(const std::vector<TimePoint<>>& data,
-                                                          double c,
-                                                          Combiner& combiner);
+    std::optional<TimePoint<>> localizationByQPMethod(const TimePoint<>& p0,
+                                                      TimePoint<> p1,
+                                                      TimePoint<> p2,
+                                                      double c);
+    std::optional<TimePoint<>> localizationByQPMethod(const std::vector<TimePoint<>>& data, double c);
+    std::optional<TimePoint<>> localizationByQPMethod(const std::vector<TimePoint<>>& data,
+                                                      double c,
+                                                      Combiner& combiner);
 }
 
 #endif //PLOC_LOCALIZATION_H

@@ -3,10 +3,10 @@
 #include "LocalizationTools.h"
 
 namespace pl {
-std::optional<TimePoint<>> localizationByVectorMethod(const TimePoint<>& p0,
-                                                      TimePoint<> p1,
-                                                      TimePoint<> p2,
-                                                      double c) {
+std::optional<TimePoint<>> localizationByQPMethod(const TimePoint<>& p0,
+                                                  TimePoint<> p1,
+                                                  TimePoint<> p2,
+                                                  double c) {
     /* Local vars names according to the formula in the documentation. */
     p1 = p1 - p0;
     p2 = p2 - p0;
@@ -66,11 +66,11 @@ std::optional<TimePoint<>> localizationByVectorMethod(const TimePoint<>& p0,
                        (p1.x * q[1] - p2.x * q[0]) / v, -root / c} + p0;
 }
 
-std::optional<TimePoint<>> localizationByVectorMethod(const std::vector<TimePoint<>>& data,
-                                                      double c,
-                                                      Combiner& combiner) {
+std::optional<TimePoint<>> localizationByQPMethod(const std::vector<TimePoint<>>& data,
+                                                  double c,
+                                                  Combiner& combiner) {
     using FuncType = std::optional<TimePoint<>>(*)(const TimePoint<>&, TimePoint<>, TimePoint<>, double);
-    return localization<3, FuncType>(data, c, combiner, localizationByVectorMethod);
+    return localization<3, FuncType>(data, c, combiner, localizationByQPMethod);
 }
 
 }

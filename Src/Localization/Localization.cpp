@@ -9,5 +9,5 @@ std::optional<TimePoint<>> FUNC(const std::vector<TimePoint<>>& data, double c) 
 namespace pl {
     PL_ADD_LOCALIZATION_FUNC_WITH_DEFAULT_COMBINER(localizationByDirectMethod)
     PL_ADD_LOCALIZATION_FUNC_WITH_DEFAULT_COMBINER(localizationByQuadrangleMethod)
-    PL_ADD_LOCALIZATION_FUNC_WITH_DEFAULT_COMBINER(localizationByVectorMethod)
+    PL_ADD_LOCALIZATION_FUNC_WITH_DEFAULT_COMBINER(localizationByQPMethod)
 }
