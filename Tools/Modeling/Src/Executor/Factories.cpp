@@ -51,7 +51,7 @@ LocalizationFunc localizationAlgorithmFactory(const ExperimentDescription::Local
     std::unordered_map<ExperimentDescription::LocalizationAlgoType, LocalizationFunc> factories = {
             {ExperimentDescription::LocalizationAlgoType::Direct,     pl::localizationByDirectMethod    },
             {ExperimentDescription::LocalizationAlgoType::Quadrangle, pl::localizationByQuadrangleMethod},
-            {ExperimentDescription::LocalizationAlgoType::Vector,     pl::localizationByVectorMethod    }
+            {ExperimentDescription::LocalizationAlgoType::QP,         pl::localizationByQPMethod        }
     };
 
     return factories[algoType];

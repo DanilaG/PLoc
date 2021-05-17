@@ -85,7 +85,7 @@ struct ExperimentDescription {
     enum class LocalizationAlgoType {
         Direct,
         Quadrangle,
-        Vector
+        QP
     };
 
     /** Type of combiner algorithm */
