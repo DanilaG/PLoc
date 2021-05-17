@@ -19,7 +19,6 @@ macro(package_add_test TESTNAME)
     set_property(TARGET ${TESTNAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY $<TARGET_FILE_DIR:${TESTNAME}>)
     add_test(NAME ${TESTNAME} COMMAND ${TESTNAME})
     set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
-    set(ALL_TEST ${ALL_TEST} ${ARGN})
 endmacro()
 
-package_add_test(FULL_LDTC_TESTS Tests.cpp)
+package_add_test(FULL_TESTS Tests.cpp)

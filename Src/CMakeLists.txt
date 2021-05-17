@@ -22,7 +22,7 @@ set(EXECUTABLE
         Localization/DirectMethod.cpp
         Localization/Localization.cpp
         Localization/QuadMethod.cpp
-        Localization/VectorMethod.cpp
+        Localization/QPMethod.cpp
         )
 
 include_directories(Structures)
