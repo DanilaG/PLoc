@@ -15,7 +15,7 @@ class TimeHistogramMaker(HistogramMaker):
 parser = ArgumentParser()
 parser.add_argument("-l", "--lightning", dest="in_file_name",
                     help="input file with lightning coordinates", metavar="IN_FILE")
-parser.add_argument("-c", "--columns", dest="number_columns", default=15, help="number columns in histogram")
+parser.add_argument("-c", "--columns", dest="number_columns", default=20, help="number columns in histogram")
 parser.add_argument("-o", "--out", dest="out_file_name", default="out.png",
                     help="input file with lightning coordinates", metavar="OUT_FILE")
 args = parser.parse_args()
