@@ -7,7 +7,7 @@
 #include "Combiner.h"
 
 namespace pl {
-class TriangleCombiner: Combiner {
+class TriangleCombiner: public Combiner {
 public:
     void add(const TimePoint<>& answer, const std::vector<Point<>>& locators) final;
 

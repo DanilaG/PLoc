@@ -92,7 +92,8 @@ struct ExperimentDescription {
     enum class CombinerType {
         Mean,
         FilteredMean,
-        Median
+        Median,
+        Triangle
     };
 
     /** Scene area sampling grid */

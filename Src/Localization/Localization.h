@@ -9,6 +9,7 @@
 #include "Combiner/MeanCombiner.h"
 #include "Combiner/FilteredMeanCombiner.h"
 #include "Combiner/MedianCombiner.h"
+#include "Combiner/TriangleCombiner.h"
 #include "Geometric/Points/TimePoint.h"
 
 namespace pl {

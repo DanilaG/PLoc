@@ -41,6 +41,10 @@ std::shared_ptr<pl::Combiner> combinerFactory(const ExperimentDescription::Combi
             {
                     ExperimentDescription::CombinerType::Median,
                     [](){ return std::static_pointer_cast<pl::Combiner>(std::make_shared<pl::MedianCombiner>()); }
+            },
+            {
+                    ExperimentDescription::CombinerType::Triangle,
+                    [](){ return std::static_pointer_cast<pl::Combiner>(std::make_shared<pl::TriangleCombiner>()); }
             }
     };
 

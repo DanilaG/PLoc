@@ -15,7 +15,7 @@ void TriangleCombiner::add(const TimePoint<>& answer, const std::vector<Point<>>
     double S = sqrt(p * (p - sides[0]) * (p - sides[1]) * (p - sides[2]));
 
     double k = abs((sqrt(3) / 2) - ((2 * S) / (minSide * minSide)));
-    double mass = 1 / (k + 1) * S * S;
+    double mass = 1 / (k + 1) * S;
 
     data_.emplace_back(answer, mass);
 }
