@@ -4,6 +4,7 @@
 #include "Localization/Combiner/FilteredMeanCombiner.h"
 #include "Localization/Combiner/MeanCombiner.h"
 #include "Localization/Combiner/MedianCombiner.h"
+#include "Localization/Combiner/TriangleCombiner.h"
 
 TEST(DIRECT_DETECT, IN_TRIANGLE){
     LOCALIZATION_RESULT_EQ(pl::localizationByDirectMethod({{-5, -5, 15.640312423743286},
@@ -55,49 +56,49 @@ TEST(DIRECT_DETECT, FOUR_DETECTORS){
                                                           2),
                            pl::TimePoint<>(0, 4, 3))}
 
-TEST(VECTOR_DETECT, IN_TRIANGLE){
+TEST(QP_DETECT, IN_TRIANGLE){
     LOCALIZATION_RESULT_EQ(pl::localizationByQPMethod({{-5, -5, 15.640312423743286},
                                                        {5,  -5, 15.640312423743286},
                                                        {0,  5,  15.6}},
                                                       10),
                            pl::TimePoint<>(0, -1, 15))}
 
-TEST(VECTOR_DETECT, OUT_TRIANGLE_1){
+TEST(QP_DETECT, OUT_TRIANGLE_1){
     LOCALIZATION_RESULT_EQ(pl::localizationByQPMethod({{1,  1, 11.17851130197758},
                                                        {10, 2, 10.424918292799399},
                                                        {12, 3, 10.25}},
                                                       12),
                            pl::TimePoint<>(15, 3, 10))}
 
-TEST(VECTOR_DETECT, OUT_TRIANGLE_2){
+TEST(QP_DETECT, OUT_TRIANGLE_2){
     LOCALIZATION_RESULT_EQ(pl::localizationByQPMethod({{-10, -15, 13.77307714089059},
                                                        {-2,  -5,  12.927361345041716},
                                                        {-8,  -20, 14.174159928789397}},
                                                       12),
                            pl::TimePoint<>(-5, 30, 10))}
 
-TEST(VECTOR_DETECT, DETECTOR_LINE){
+TEST(QP_DETECT, DETECTOR_LINE){
     LOCALIZATION_RESULT_EQ(pl::localizationByQPMethod({{-1, -1, 4.58113883008419},
                                                        {-2, -2, 4.414213562373095},
                                                        {-4, -4, 5}},
                                                       2),
                            std::nullopt)}
 
-TEST(VECTOR_DETECT, ON_EDGE){
+TEST(QP_DETECT, ON_EDGE){
     LOCALIZATION_RESULT_EQ(pl::localizationByQPMethod({{-1, 0, 3.5},
                                                        {1,  0, 3.5},
                                                        {0,  2, 4}},
                                                       2),
                            pl::TimePoint<>(0, 0, 3))}
 
-TEST(VECTOR_DETECT, BEHIND_DETECTOR){LOCALIZATION_RESULT_EQ(
+TEST(QP_DETECT, BEHIND_DETECTOR){LOCALIZATION_RESULT_EQ(
             pl::localizationByQPMethod(
                     {{-1, 0, 5.061552812808831},
                      {1,  0, 5.061552812808831},
                      {0,  2, 4}}, 2),
     std::nullopt)}
 
-TEST(VECTOR_DETECT, FOUR_DETECTORS){
+TEST(QP_DETECT, FOUR_DETECTORS){
     LOCALIZATION_RESULT_EQ(pl::localizationByQPMethod({{-1, 0, 5.061552812808831},
                                                        {1,  0, 5.061552812808831},
                                                        {0,  2, 4},
@@ -163,63 +164,92 @@ TEST(QUAD_DETECT, FIVE_DETECTORS) {
 TEST(MEAN_COMBINER, INHERITANCE) {
     pl::MeanCombiner combiner;
     EXPECT_FALSE(combiner.result().has_value());
-    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
     EXPECT_TRUE(combiner.result().has_value());
     combiner.reset();
     EXPECT_FALSE(combiner.result().has_value());
-    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
     EXPECT_TRUE(combiner.result().has_value());
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 1, 1));
 }
 
 TEST(MEAN_COMBINER, MULTY) {
     pl::MeanCombiner combiner;
-    combiner.add(pl::TimePoint<>(1, 0, 0));
-    combiner.add(pl::TimePoint<>(1, 1, 1));
-    combiner.add(pl::TimePoint<>(5, 1, 2));
-    combiner.add(pl::TimePoint<>(1, 0, 3));
+    combiner.add(pl::TimePoint<>(1, 0, 0), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(5, 1, 2), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(1, 0, 3), std::vector<pl::Point<>>());
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(2, 0.5, 1.5));
 }
 
 TEST(MEDIAN_COMBINER, INHERITANCE) {
     pl::MedianCombiner combiner;
     EXPECT_FALSE(combiner.result().has_value());
-    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
     EXPECT_TRUE(combiner.result().has_value());
     combiner.reset();
     EXPECT_FALSE(combiner.result().has_value());
-    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
     EXPECT_TRUE(combiner.result().has_value());
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 1, 1));
 }
 
 TEST(MEDIAN_COMBINER, MULTY) {
     pl::MedianCombiner combiner;
-    combiner.add(pl::TimePoint<>(1, 0, 0));
-    combiner.add(pl::TimePoint<>(1, 1, 1));
-    combiner.add(pl::TimePoint<>(5, 1, 2));
-    combiner.add(pl::TimePoint<>(1, 0, 3));
+    combiner.add(pl::TimePoint<>(1, 0, 0), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(5, 1, 2), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(1, 0, 3), std::vector<pl::Point<>>());
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 1, 2));
 }
 
 TEST(FILTERED_MEAN_COMBINER, INHERITANCE) {
     pl::FilteredMeanCombiner combiner;
     EXPECT_FALSE(combiner.result().has_value());
-    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
     EXPECT_TRUE(combiner.result().has_value());
     combiner.reset();
     EXPECT_FALSE(combiner.result().has_value());
-    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
     EXPECT_TRUE(combiner.result().has_value());
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 1, 1));
 }
 
 TEST(FILTERED_MEAN_COMBINER, MULTY) {
     pl::FilteredMeanCombiner combiner;
-    combiner.add(pl::TimePoint<>(1, 0, 0));
-    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(1, 0, 0), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 0.5, 0.5));
-    combiner.add(pl::TimePoint<>(5, 1, 2));
-    combiner.add(pl::TimePoint<>(1, 0, 3));
+    combiner.add(pl::TimePoint<>(5, 1, 2), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(1, 0, 3), std::vector<pl::Point<>>());
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 0.5, 1.5));
+}
+
+TEST(FILTERED_TRIANGLE_COMBINER, INHERITANCE) {
+    pl::TriangleCombiner combiner;
+    EXPECT_FALSE(combiner.result().has_value());
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
+    EXPECT_TRUE(combiner.result().has_value());
+    combiner.reset();
+    EXPECT_FALSE(combiner.result().has_value());
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
+    EXPECT_TRUE(combiner.result().has_value());
+    LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 1, 1));
+}
+
+TEST(FILTERED_TRIANGLE_COMBINER, MULTY) {
+    pl::TriangleCombiner combiner;
+    combiner.add(pl::TimePoint<>(0, 0, 0),
+                 {
+                         pl::Point<>{-5, 0},
+                         pl::Point<>{5, 0},
+                         pl::Point<>{0, 8.66}
+                 });
+    combiner.add(pl::TimePoint<>(1, 1, 1),
+                 {
+                         pl::Point<>{0, 0},
+                         pl::Point<>{5, 0},
+                         pl::Point<>{0, 8.66}
+                 });
+    LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(0.1181501898, 0.1181501898, 0.1181501898));
 }

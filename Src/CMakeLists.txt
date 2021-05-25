@@ -9,6 +9,7 @@ set(HEADERS
         Localization/Combiner/FilteredMeanCombiner.h
         Localization/Combiner/MedianCombiner.h
         Localization/Combiner/ParallelCombiner.h
+        Localization/Combiner/TriangleCombiner.h
         Structures/Geometric/Points/Point.h
         Structures/Geometric/Points/TimePoint.h
         )
@@ -19,6 +20,7 @@ set(EXECUTABLE
         Localization/Combiner/FilteredMeanCombiner.cpp
         Localization/Combiner/MedianCombiner.cpp
         Localization/Combiner/ParallelCombiner.cpp
+        Localization/Combiner/TriangleCombiner.cpp
         Localization/DirectMethod.cpp
         Localization/Localization.cpp
         Localization/QuadMethod.cpp
