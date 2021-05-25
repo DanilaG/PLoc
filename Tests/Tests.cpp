@@ -4,6 +4,7 @@
 #include "Localization/Combiner/FilteredMeanCombiner.h"
 #include "Localization/Combiner/MeanCombiner.h"
 #include "Localization/Combiner/MedianCombiner.h"
+#include "Localization/Combiner/TriangleCombiner.h"
 
 TEST(DIRECT_DETECT, IN_TRIANGLE){
     LOCALIZATION_RESULT_EQ(pl::localizationByDirectMethod({{-5, -5, 15.640312423743286},
@@ -222,4 +223,33 @@ TEST(FILTERED_MEAN_COMBINER, MULTY) {
     combiner.add(pl::TimePoint<>(5, 1, 2), std::vector<pl::Point<>>());
     combiner.add(pl::TimePoint<>(1, 0, 3), std::vector<pl::Point<>>());
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 0.5, 1.5));
+}
+
+TEST(FILTERED_TRIANGLE_COMBINER, INHERITANCE) {
+    pl::TriangleCombiner combiner;
+    EXPECT_FALSE(combiner.result().has_value());
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
+    EXPECT_TRUE(combiner.result().has_value());
+    combiner.reset();
+    EXPECT_FALSE(combiner.result().has_value());
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
+    EXPECT_TRUE(combiner.result().has_value());
+    LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 1, 1));
+}
+
+TEST(FILTERED_TRIANGLE_COMBINER, MULTY) {
+    pl::TriangleCombiner combiner;
+    combiner.add(pl::TimePoint<>(0, 0, 0),
+                 {
+                         pl::Point<>{-5, 0},
+                         pl::Point<>{5, 0},
+                         pl::Point<>{0, 8.66}
+                 });
+    combiner.add(pl::TimePoint<>(1, 1, 1),
+                 {
+                         pl::Point<>{0, 0},
+                         pl::Point<>{5, 0},
+                         pl::Point<>{0, 8.66}
+                 });
+    LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(0.1181501898, 0.1181501898, 0.1181501898));
 }
