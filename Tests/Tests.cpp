@@ -163,63 +163,63 @@ TEST(QUAD_DETECT, FIVE_DETECTORS) {
 TEST(MEAN_COMBINER, INHERITANCE) {
     pl::MeanCombiner combiner;
     EXPECT_FALSE(combiner.result().has_value());
-    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
     EXPECT_TRUE(combiner.result().has_value());
     combiner.reset();
     EXPECT_FALSE(combiner.result().has_value());
-    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
     EXPECT_TRUE(combiner.result().has_value());
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 1, 1));
 }
 
 TEST(MEAN_COMBINER, MULTY) {
     pl::MeanCombiner combiner;
-    combiner.add(pl::TimePoint<>(1, 0, 0));
-    combiner.add(pl::TimePoint<>(1, 1, 1));
-    combiner.add(pl::TimePoint<>(5, 1, 2));
-    combiner.add(pl::TimePoint<>(1, 0, 3));
+    combiner.add(pl::TimePoint<>(1, 0, 0), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(5, 1, 2), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(1, 0, 3), std::vector<pl::Point<>>());
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(2, 0.5, 1.5));
 }
 
 TEST(MEDIAN_COMBINER, INHERITANCE) {
     pl::MedianCombiner combiner;
     EXPECT_FALSE(combiner.result().has_value());
-    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
     EXPECT_TRUE(combiner.result().has_value());
     combiner.reset();
     EXPECT_FALSE(combiner.result().has_value());
-    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
     EXPECT_TRUE(combiner.result().has_value());
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 1, 1));
 }
 
 TEST(MEDIAN_COMBINER, MULTY) {
     pl::MedianCombiner combiner;
-    combiner.add(pl::TimePoint<>(1, 0, 0));
-    combiner.add(pl::TimePoint<>(1, 1, 1));
-    combiner.add(pl::TimePoint<>(5, 1, 2));
-    combiner.add(pl::TimePoint<>(1, 0, 3));
+    combiner.add(pl::TimePoint<>(1, 0, 0), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(5, 1, 2), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(1, 0, 3), std::vector<pl::Point<>>());
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 1, 2));
 }
 
 TEST(FILTERED_MEAN_COMBINER, INHERITANCE) {
     pl::FilteredMeanCombiner combiner;
     EXPECT_FALSE(combiner.result().has_value());
-    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
     EXPECT_TRUE(combiner.result().has_value());
     combiner.reset();
     EXPECT_FALSE(combiner.result().has_value());
-    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
     EXPECT_TRUE(combiner.result().has_value());
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 1, 1));
 }
 
 TEST(FILTERED_MEAN_COMBINER, MULTY) {
     pl::FilteredMeanCombiner combiner;
-    combiner.add(pl::TimePoint<>(1, 0, 0));
-    combiner.add(pl::TimePoint<>(1, 1, 1));
+    combiner.add(pl::TimePoint<>(1, 0, 0), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(1, 1, 1), std::vector<pl::Point<>>());
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 0.5, 0.5));
-    combiner.add(pl::TimePoint<>(5, 1, 2));
-    combiner.add(pl::TimePoint<>(1, 0, 3));
+    combiner.add(pl::TimePoint<>(5, 1, 2), std::vector<pl::Point<>>());
+    combiner.add(pl::TimePoint<>(1, 0, 3), std::vector<pl::Point<>>());
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(1, 0.5, 1.5));
 }

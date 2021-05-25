@@ -76,11 +76,19 @@ std::optional<TimePoint<>> localization(const std::vector<TimePoint<>>& data,
     auto indexSequence = std::make_index_sequence<K>{};
     combiner.reset();
 
+    std::vector<Point<>> locators(K, Point<>());
+
     do {
         auto combination = combinations.get();
         auto result = executeLocalization<F, K, typename decltype(indexSequence)::value_type>(data, c, funcOfLocalization, combination, indexSequence);
+
+        for (unsigned int i = 0; i < K; i++) {
+            locators[i].x = data[combination[i]].x;
+            locators[i].y = data[combination[i]].y;
+        }
+
         if (result.has_value()) {
-            combiner.add(result.value());
+            combiner.add(result.value(), locators);
         }
     } while(combinations.next());
 
