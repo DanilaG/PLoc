@@ -11,6 +11,7 @@ set(HEADERS
         Localization/Combiner/ParallelCombiner.h
         Localization/Combiner/TriangleCombiner.h
         Structures/Geometric/Points/Point.h
+        Structures/Geometric/Points/SpherePoint.h
         Structures/Geometric/Points/TimePoint.h
         )
 
