@@ -3,7 +3,7 @@
 
 #include <cxxopts.hpp>
 
-#include "FactoryFromJSON.h"
+#include "Src2/FactoryFromJSON.h"
 
 namespace opt_names {
     const std::string input = "input";

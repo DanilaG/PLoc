@@ -1,19 +1,19 @@
 project(PLoc_Modeling2)
 
 set(HEADERS
-        Algorithm.h
-        Combiner.h
-        ErrorGenerator.h
-        Experimenter.h
-        FactoryFromJSON.h
-        Scene.h
+        Src2/Algorithm.h
+        Src2/Combiner.h
+        Src2/ErrorGenerator.h
+        Src2/Experimenter.h
+        Src2/FactoryFromJSON.h
+        Src2/Scene.h
         )
 
 set(EXECUTABLE
         main.cpp
-        ErrorGenerator.cpp
-        Experimenter.cpp
-        FactoryFromJSON.cpp
+        Src2/ErrorGenerator.cpp
+        Src2/Experimenter.cpp
+        Src2/FactoryFromJSON.cpp
         )
 
 FetchContent_Declare(
@@ -47,8 +47,8 @@ if(NOT magic_enum_POPULATED)
 endif()
 
 include_directories(
-        ../../../Src
-        ../../../Src/Structures
+        ../../Src
+        ../../Src/Structures
 )
 
 add_executable(${PROJECT_NAME} ${HEADERS} ${EXECUTABLE})
