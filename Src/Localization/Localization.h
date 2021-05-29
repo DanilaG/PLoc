@@ -10,6 +10,7 @@
 #include "Combiner/FilteredMeanCombiner.h"
 #include "Combiner/MedianCombiner.h"
 #include "Combiner/TriangleCombiner.h"
+#include "Combiner/TimeDifferenceCombiner.h"
 #include "Geometric/Points/TimePoint.h"
 
 namespace pl {
