@@ -5,6 +5,7 @@
 #include "Localization/Combiner/MeanCombiner.h"
 #include "Localization/Combiner/MedianCombiner.h"
 #include "Localization/Combiner/TriangleCombiner.h"
+#include "Geometric/Points/SpherePoint.h"
 
 TEST(DIRECT_DETECT, IN_TRIANGLE){
     LOCALIZATION_RESULT_EQ(pl::localizationByDirectMethod({{-5, -5, 15.640312423743286},
@@ -252,4 +253,26 @@ TEST(FILTERED_TRIANGLE_COMBINER, MULTY) {
                          pl::Point<>{0, 8.66}
                  });
     LOCALIZATION_RESULT_EQ(combiner.result().value(), pl::TimePoint<>(0.1181501898, 0.1181501898, 0.1181501898));
+}
+
+TEST(PROJECTIONS, BY_EQUIRECTANGULAR) {
+    double radius = 10;
+    pl::SpherePoint spherePoint = {1, 20};
+    auto plainPoint = pl::projectByEquirectangular(spherePoint, radius, 0);
+    EXPECT_FLOAT_EQ(3.4906585, plainPoint.x);
+    EXPECT_FLOAT_EQ(0.17453292, plainPoint.y);
+    auto resultSpherePoint = pl::fromEquirectangular(plainPoint, radius, 0);
+    EXPECT_FLOAT_EQ(spherePoint.latitude, resultSpherePoint.latitude);
+    EXPECT_FLOAT_EQ(spherePoint.longitude, resultSpherePoint.longitude);
+}
+
+TEST(PROJECTIONS, BY_SINUSOIDAL) {
+    double radius = 10;
+    pl::SpherePoint spherePoint = {1, 20};
+    auto plainPoint = pl::projectBySinusoidal(spherePoint, radius);
+    EXPECT_FLOAT_EQ(3.4901268, plainPoint.x);
+    EXPECT_FLOAT_EQ(0.17453292, plainPoint.y);
+    auto resultSpherePoint = pl::fromSinusoidal(plainPoint, radius);
+    EXPECT_FLOAT_EQ(spherePoint.latitude, resultSpherePoint.latitude);
+    EXPECT_FLOAT_EQ(spherePoint.longitude, resultSpherePoint.longitude);
 }

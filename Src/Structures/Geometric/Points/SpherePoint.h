@@ -13,21 +13,13 @@ public:
     double longitude;
 };
 
-Point<double> projectByEquirectangular(const SpherePoint<T>& location, double radius, double standardParallel) {
-    return {radius * location.longitude * cos(standardParallel), radius * location.latitude};
-}
+Point<double> projectByEquirectangular(const SpherePoint& location, double radius, double standardParallel);
+SpherePoint fromEquirectangular(const Point<double>& location, double radius, double standardParallel);
 
-Point<double> projectByKavrayskiy7(const SpherePoint<T>& location, double radius) {
-    doyble k = location.latitude / M_PI;
-    return {
-        radius * 3.0 / 2.0 * location.longitude * sqrt(1.0 / 3.0 - (k * k)),
-        radius * location.latitude
-    };
-}
+Point<double> projectBySinusoidal(const SpherePoint& location, double radius);
+SpherePoint fromSinusoidal(const Point<double>& location, double radius);
 
-Point<double> projectBySinusoidal(const SpherePoint<T>& location, double radius) {
-    return {radius * location.longitude * cos(location.latitude), radius * location.latitude};
-}
+double dist(const SpherePoint& a, const SpherePoint& b, double radius);
 
 }
 

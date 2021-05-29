@@ -26,6 +26,7 @@ set(EXECUTABLE
         Localization/Localization.cpp
         Localization/QuadMethod.cpp
         Localization/QPMethod.cpp
+        Structures/Geometric/Points/SpherePoint.cpp
         )
 
 include_directories(Structures)
