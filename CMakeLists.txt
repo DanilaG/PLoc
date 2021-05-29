@@ -5,4 +5,5 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(Src)
 add_subdirectory(Tests)
-add_subdirectory(Tools/Modeling/Src)
+#add_subdirectory(Tools/Modeling/Src)
+add_subdirectory(Tools/Modeling/Src2)
