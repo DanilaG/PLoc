@@ -11,7 +11,7 @@ namespace pl {
 class Combiner {
 public:
     /** Add new answer from locators */
-    virtual void add(const TimePoint<>& answer, const std::vector<Point<>>& locators) = 0;
+    virtual void add(const TimePoint<>& answer, const std::vector<TimePoint<>>& locators) = 0;
     /** Count result of combining */
     virtual std::optional<TimePoint<>> result() = 0;
     /** Reset class */

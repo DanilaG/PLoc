@@ -30,7 +30,7 @@ public:
                      std::shared_ptr<ParallelCombiner::DataCombiner> time):
                      x_(x), y_(y), time_(time) {}
 
-    void add(const TimePoint<>& answer, const std::vector<Point<>>& locators) final;
+    void add(const TimePoint<>& answer, const std::vector<TimePoint<>>& locators) final;
 
     std::optional<TimePoint<>> result() final;
 

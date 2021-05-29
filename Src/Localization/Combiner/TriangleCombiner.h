@@ -9,7 +9,7 @@
 namespace pl {
 class TriangleCombiner: public Combiner {
 public:
-    void add(const TimePoint<>& answer, const std::vector<Point<>>& locators) final;
+    void add(const TimePoint<>& answer, const std::vector<TimePoint<>>& locators) final;
 
     std::optional<TimePoint<>> result() final;
 

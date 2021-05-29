@@ -1,7 +1,7 @@
 #include "TriangleCombiner.h"
 
 namespace pl {
-void TriangleCombiner::add(const TimePoint<>& answer, const std::vector<Point<>>& locators) {
+void TriangleCombiner::add(const TimePoint<>& answer, const std::vector<TimePoint<>>& locators) {
     const int requiredNumberOfLocators = 3;
     assert(locators.size() == requiredNumberOfLocators && "TriangleCombiner work only with a triangle!");
 
