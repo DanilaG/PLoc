@@ -5,6 +5,7 @@
 #include "Localization/Combiner/MeanCombiner.h"
 #include "Localization/Combiner/MedianCombiner.h"
 #include "Localization/Combiner/TriangleCombiner.h"
+#include "Localization/Combiner/TimeDifferenceCombiner.h"
 #include "Geometric/Points/SpherePoint.h"
 
 TEST(DIRECT_DETECT, IN_TRIANGLE){

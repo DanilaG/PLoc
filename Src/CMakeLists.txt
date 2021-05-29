@@ -7,8 +7,10 @@ set(HEADERS
         Localization/Combiner/Combiner.h
         Localization/Combiner/MeanCombiner.h
         Localization/Combiner/FilteredMeanCombiner.h
+        Localization/Combiner/MassCombiner.h
         Localization/Combiner/MedianCombiner.h
         Localization/Combiner/ParallelCombiner.h
+        Localization/Combiner/TimeDifferenceCombiner.h
         Localization/Combiner/TriangleCombiner.h
         Structures/Geometric/Points/Point.h
         Structures/Geometric/Points/SpherePoint.h
@@ -19,8 +21,10 @@ set(EXECUTABLE
         Debug/Log.cpp
         Localization/Combiner/MeanCombiner.cpp
         Localization/Combiner/FilteredMeanCombiner.cpp
+        Localization/Combiner/MassCombiner.cpp
         Localization/Combiner/MedianCombiner.cpp
         Localization/Combiner/ParallelCombiner.cpp
+        Localization/Combiner/TimeDifferenceCombiner.cpp
         Localization/Combiner/TriangleCombiner.cpp
         Localization/DirectMethod.cpp
         Localization/Localization.cpp

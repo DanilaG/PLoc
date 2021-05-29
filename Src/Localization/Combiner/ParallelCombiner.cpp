@@ -1,7 +1,7 @@
 #include "ParallelCombiner.h"
 
 namespace pl {
-    void ParallelCombiner::add(const TimePoint<>& answer, const std::vector<Point<>>& locators) {
+    void ParallelCombiner::add(const TimePoint<>& answer, const std::vector<TimePoint<>>& locators) {
         x_->add(answer.x);
         y_->add(answer.y);
         time_->add(answer.time);
