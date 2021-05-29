@@ -7,6 +7,7 @@ set(HEADERS
         Localization/Combiner/Combiner.h
         Localization/Combiner/MeanCombiner.h
         Localization/Combiner/FilteredMeanCombiner.h
+        Localization/Combiner/MassCombiner.h
         Localization/Combiner/MedianCombiner.h
         Localization/Combiner/ParallelCombiner.h
         Localization/Combiner/TriangleCombiner.h
@@ -19,6 +20,7 @@ set(EXECUTABLE
         Debug/Log.cpp
         Localization/Combiner/MeanCombiner.cpp
         Localization/Combiner/FilteredMeanCombiner.cpp
+        Localization/Combiner/MassCombiner.cpp
         Localization/Combiner/MedianCombiner.cpp
         Localization/Combiner/ParallelCombiner.cpp
         Localization/Combiner/TriangleCombiner.cpp
