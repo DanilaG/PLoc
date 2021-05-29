@@ -5,13 +5,13 @@
 #include "Localization/Combiner/FilteredMeanCombiner.h"
 #include "Localization/Combiner/MedianCombiner.h"
 #include "Localization/Combiner/TriangleCombiner.h"
-#include "Localization/Combiner/TimeDifferenceCombiner.h"
+#include "Localization/Combiner/TimeSumCombiner.h"
 
 class MeanCombiner;
 class FilteredMeanCombiner;
 class MedianCombiner;
 class TriangleCombiner;
-class TimeDifferenceCombiner;
+class TimeSumCombiner;
 
 class Combiner {
 public:
@@ -52,12 +52,12 @@ private:
     pl::TriangleCombiner combiner_;
 };
 
-class TimeDifferenceCombiner: public Combiner {
+class TimeSumCombiner: public Combiner {
 public:
     pl::Combiner& get() final { return combiner_; }
 
 private:
-    pl::TimeDifferenceCombiner combiner_;
+    pl::TimeSumCombiner combiner_;
 };
 
 #endif //PLOC_MODELING_COMBINER_H

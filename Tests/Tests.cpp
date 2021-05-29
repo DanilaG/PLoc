@@ -6,6 +6,7 @@
 #include "Localization/Combiner/MedianCombiner.h"
 #include "Localization/Combiner/TriangleCombiner.h"
 #include "Localization/Combiner/TimeSumCombiner.h"
+#include "Geometric/Points/SpherePoint.h"
 
 TEST(DIRECT_DETECT, IN_TRIANGLE){
     LOCALIZATION_RESULT_EQ(pl::localizationByDirectMethod({{-5, -5, 15.640312423743286},

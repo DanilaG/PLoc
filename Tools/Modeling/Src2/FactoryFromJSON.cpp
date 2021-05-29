@@ -191,8 +191,8 @@ Combiner* createCombiner(nlohmann::json& json) {
                     [](){ return static_cast<Combiner*>(new TriangleCombiner); }
             },
             {
-                    "TimeDifference",
-                    [](){ return static_cast<Combiner*>(new TimeDifferenceCombiner); }
+                    "TimeSum",
+                    [](){ return static_cast<Combiner*>(new TimeSumCombiner); }
             }
     };
 
