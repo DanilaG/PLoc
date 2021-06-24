@@ -27,6 +27,7 @@ set(EXECUTABLE
         Localization/Combiner/TimeSumCombiner.cpp
         Localization/Combiner/TriangleCombiner.cpp
         Localization/DirectMethod.cpp
+        Localization/ElderMeadMethod.cpp
         Localization/Localization.cpp
         Localization/QuadMethod.cpp
         Localization/QPMethod.cpp
