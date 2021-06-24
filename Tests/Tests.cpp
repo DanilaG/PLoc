@@ -317,10 +317,10 @@ TEST(PROJECTIONS, BY_EQUIRECTANGULAR) {
 
 TEST(PROJECTIONS, BY_SINUSOIDAL) {
     double radius = 10;
-    pl::SpherePoint spherePoint = {1, 20};
+    pl::SpherePoint spherePoint = {20, 10};
     auto plainPoint = pl::projectBySinusoidal(spherePoint, radius);
-    EXPECT_FLOAT_EQ(3.4901268, plainPoint.x);
-    EXPECT_FLOAT_EQ(0.17453292, plainPoint.y);
+    EXPECT_FLOAT_EQ(1.6400731, plainPoint.x);
+    EXPECT_FLOAT_EQ(3.4906585, plainPoint.y);
     auto resultSpherePoint = pl::fromSinusoidal(plainPoint, radius);
     EXPECT_FLOAT_EQ(spherePoint.latitude, resultSpherePoint.latitude);
     EXPECT_FLOAT_EQ(spherePoint.longitude, resultSpherePoint.longitude);
