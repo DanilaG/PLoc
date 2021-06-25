@@ -163,6 +163,59 @@ TEST(QUAD_DETECT, FIVE_DETECTORS) {
                            pl::TimePoint<>(6, 7, 5));
 }
 
+TEST(ELDER_MEAD_DETECT, IN_TRIANGLE){
+    LOCALIZATION_RESULT_EQ(pl::localizationByElderMeadMethod({{-5, -5, 15.640312423743286},
+                                                                 {5,  -5, 15.640312423743286},
+                                                                 {0,  5,  15.6}},
+                                                                10,
+                                                                {0, 0, 0},
+                                                                1000),
+                           pl::TimePoint<>(0, -1, 15))
+}
+
+TEST(ELDER_MEAD_DETECT, OUT_TRIANGLE){
+    LOCALIZATION_RESULT_EQ(pl::localizationByElderMeadMethod({{-10, -15, 13.77307714089059},
+                                                                 {-2,  -5,  12.927361345041716},
+                                                                 {-8,  -20, 14.174159928789397}},
+                                                                12,
+                                                                {0, 0, 0},
+                                                                1000),
+                           pl::TimePoint<>(-5, 30, 10))
+}
+
+TEST(ELDER_MEAD_DETECT, ON_EDGE){
+    LOCALIZATION_RESULT_EQ(pl::localizationByElderMeadMethod({{-1, 0, 3.5},
+                                                                 {1,  0, 3.5},
+                                                                 {0,  2, 4}},
+                                                                2,
+                                                                {0, 0, 0},
+                                                                1000),
+                           pl::TimePoint<>(0, 0, 3))
+}
+
+TEST(ELDER_MEAD_DETECT, BEHIND_DETECTOR){
+    LOCALIZATION_RESULT_EQ(
+            pl::localizationByElderMeadMethod(
+                    {{-1, 0, 5.061552812808831},
+                     {1,  0, 5.061552812808831},
+                     {0,  2, 4}},
+                     2,
+                    {0, 0, 0},
+                    1000),
+            std::nullopt)
+}
+
+TEST(ELDER_MEAD_DETECT, IN_QUAD) {
+    LOCALIZATION_RESULT_EQ(pl::localizationByElderMeadMethod({{-5, -5, 11.781024967590666},
+                                                                 {-5, 5,  11.640312423743286},
+                                                                 {6,  5,  11.721110255092798},
+                                                                 {6,  -5, 11.848528137423857}},
+                                                                10,
+                                                                {0, 0, 0},
+                                                                1000),
+                           pl::TimePoint<>(0, 1, 11))
+}
+
 TEST(MEAN_COMBINER, INHERITANCE) {
     pl::MeanCombiner combiner;
     EXPECT_FALSE(combiner.result().has_value());

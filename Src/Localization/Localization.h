@@ -41,6 +41,16 @@ namespace pl {
     std::optional<TimePoint<>> localizationByQPMethod(const std::vector<TimePoint<>>& data,
                                                       double c,
                                                       Combiner& combiner);
+
+    std::optional<TimePoint<>> localizationByElderMeadMethod(const std::vector<TimePoint<>>& data,
+                                                             double c,
+                                                             const TimePoint<>& start,
+                                                             unsigned int numberIteration = 1000,
+                                                             double step = 0.1,
+                                                             double alpha = 1,
+                                                             double gamma = 2,
+                                                             double rho = -0.5,
+                                                             double sigma = 0.5);
 }
 
 #endif //PLOC_LOCALIZATION_H
