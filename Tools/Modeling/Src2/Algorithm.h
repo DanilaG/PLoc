@@ -13,36 +13,68 @@ class QuadAlgorithm;
 
 class Algorithm {
 public:
-    virtual std::optional<pl::TimePoint<>> calculate(const std::vector<pl::TimePoint<>>&, double, pl::Combiner&) = 0;
+    virtual std::optional<pl::TimePoint<>> calculateFor(const std::vector<pl::TimePoint<>>&, double c) = 0;
 
     virtual ~Algorithm() {}
 };
 
-class DirectAlgorithm: public Algorithm {
+class ExactAlgorithm: public Algorithm {
 public:
-    std::optional<pl::TimePoint<>> calculate(const std::vector<pl::TimePoint<>>& detectors,
-                                             double c,
-                                             pl::Combiner& combiner) final {
-        return pl::localizationByDirectMethod(detectors, c, combiner);
+    ExactAlgorithm(std::shared_ptr<pl::Combiner> combiner): combiner(combiner) {}
+
+    std::shared_ptr<pl::Combiner> combiner;
+};
+
+class DirectAlgorithm: public ExactAlgorithm {
+public:
+    DirectAlgorithm(std::shared_ptr<pl::Combiner> combiner): ExactAlgorithm(combiner) {}
+
+    std::optional<pl::TimePoint<>> calculateFor(const std::vector<pl::TimePoint<>>& detectors,  double c) final {
+        return pl::localizationByDirectMethod(detectors, c, *combiner);
     }
 };
 
-class QPAlgorithm: public Algorithm {
+class QPAlgorithm: public ExactAlgorithm {
 public:
-    std::optional<pl::TimePoint<>> calculate(const std::vector<pl::TimePoint<>>& detectors,
-                                             double c,
-                                             pl::Combiner& combiner) final {
-        return pl::localizationByQPMethod(detectors, c, combiner);
+    QPAlgorithm(std::shared_ptr<pl::Combiner> combiner): ExactAlgorithm(combiner) {}
+
+    std::optional<pl::TimePoint<>> calculateFor(const std::vector<pl::TimePoint<>>& detectors,  double c) final {
+        return pl::localizationByQPMethod(detectors, c, *combiner);
     }
 };
 
-class QuadAlgorithm: public Algorithm {
+class QuadAlgorithm: public ExactAlgorithm {
 public:
-    std::optional<pl::TimePoint<>> calculate(const std::vector<pl::TimePoint<>>& detectors,
-                                             double c,
-                                             pl::Combiner& combiner) final {
-        return pl::localizationByQuadrangleMethod(detectors, c, combiner);
+    QuadAlgorithm(std::shared_ptr<pl::Combiner> combiner): ExactAlgorithm(combiner) {}
+
+    std::optional<pl::TimePoint<>> calculateFor(const std::vector<pl::TimePoint<>>& detectors,  double c) final {
+        return pl::localizationByQuadrangleMethod(detectors, c, *combiner);
     }
+};
+
+class ElderMeadAlgorithm: public Algorithm {
+public:
+    ElderMeadAlgorithm(const pl::TimePoint<>& start): start(start) {}
+
+    std::optional<pl::TimePoint<>> calculateFor(const std::vector<pl::TimePoint<>>& detectors,  double c) final {
+        return pl::localizationByElderMeadMethod(detectors,
+                                                 c,
+                                                 start,
+                                                 numberIteration,
+                                                 step,
+                                                 alpha,
+                                                 gamma,
+                                                 rho,
+                                                 sigma);
+    }
+
+    pl::TimePoint<> start {0,0, 0};
+    unsigned int numberIteration = 1000;
+    double step = 0.1;
+    double alpha = 1;
+    double gamma = 2;
+    double rho = -0.5;
+    double sigma = 0.5;
 };
 
 #endif //PLOC_ALGORITHM_H

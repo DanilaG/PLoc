@@ -22,7 +22,6 @@ public:
     void conduct();
 
     std::unique_ptr<Algorithm> algorithm;
-    std::unique_ptr<Combiner> combiner;
     std::shared_ptr<ErrorGenerator> cErrorGenerator;
     std::shared_ptr<ErrorGenerator> timeErrorGenerator;
     std::unique_ptr<Scene> scene;

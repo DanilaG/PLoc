@@ -20,8 +20,18 @@ namespace json_param_name {
         const std::string numberAttemptsInNode = "number_attempts";
         const std::string cErrorGenerator = "c_error_generator";
         const std::string timeErrorGenerator = "time_error_generator";
-        const std::string algoType = "algorithm";
-        const std::string combinerType = "combiner";
+        const std::string algorithm = "algorithm";
+    }
+
+    namespace alg {
+        const std::string name = "name";
+        const std::string combiner = "combiner";
+        const std::string step = "step";
+        const std::string alpha = "alpha";
+        const std::string gamma = "gamma";
+        const std::string rho = "rho";
+        const std::string sigma = "sigma";
+        const std::string numberIteration = "numberIteration";
     }
 
     namespace error_gen {
@@ -149,50 +159,27 @@ ErrorGenerator* createErrorGenerator(nlohmann::json& json) {
     return createLinearErrorGenerator(json);
 }
 
-Algorithm* createAlgorithm(nlohmann::json& json) {
-    const std::unordered_map<std::string, Algorithm*(*)()> algorithmsFactory = {
-            {
-                    "Direct",
-                    [](){ return static_cast<Algorithm*>(new DirectAlgorithm); }
-            },
-            {
-                    "QP",
-                    [](){ return static_cast<Algorithm*>(new QPAlgorithm); }
-            },
-            {
-                    "Quadrangle",
-                    [](){ return static_cast<Algorithm*>(new QuadAlgorithm); }
-            }
-    };
-
-    auto it = algorithmsFactory.find(json.get<std::string>());
-    if (it == algorithmsFactory.end()) {
-        throw std::invalid_argument("Wrong algorithm!");
-    }
-    return it->second();
-}
-
-Combiner* createCombiner(nlohmann::json& json) {
-    const std::unordered_map<std::string, Combiner*(*)()> combinersFactory = {
+pl::Combiner* createCombiner(nlohmann::json& json) {
+    const std::unordered_map<std::string, pl::Combiner*(*)()> combinersFactory = {
             {
                     "Mean",
-                    [](){ return static_cast<Combiner*>(new MeanCombiner); }
+                    [](){ return static_cast<pl::Combiner*>(new pl::MeanCombiner); }
             },
             {
                     "FilteredMean",
-                    [](){ return static_cast<Combiner*>(new FilteredMeanCombiner); }
+                    [](){ return static_cast<pl::Combiner*>(new pl::FilteredMeanCombiner); }
             },
             {
                     "Median",
-                    [](){ return static_cast<Combiner*>(new MedianCombiner); }
+                    [](){ return static_cast<pl::Combiner*>(new pl::MedianCombiner); }
             },
             {
                     "Triangle",
-                    [](){ return static_cast<Combiner*>(new TriangleCombiner); }
+                    [](){ return static_cast<pl::Combiner*>(new pl::TriangleCombiner); }
             },
             {
                     "TimeSum",
-                    [](){ return static_cast<Combiner*>(new TimeSumCombiner); }
+                    [](){ return static_cast<pl::Combiner*>(new pl::TimeSumCombiner); }
             }
     };
 
@@ -201,6 +188,63 @@ Combiner* createCombiner(nlohmann::json& json) {
         throw std::invalid_argument("Wrong combiner!");
     }
     return it->second();
+}
+
+Algorithm* createAlgorithm(nlohmann::json& json) {
+    const std::unordered_map<std::string, Algorithm*(*)(nlohmann::json& json)> algorithmsFactory = {
+            {
+                    "Direct",
+                    [](nlohmann::json& json) {
+                        pl::Combiner* combiner = createCombiner(json.at(json_param_name::alg::combiner));
+                        return static_cast<Algorithm*>(new DirectAlgorithm(std::shared_ptr<pl::Combiner>(combiner)));
+                    }
+            },
+            {
+                    "QP",
+                    [](nlohmann::json& json) {
+                        pl::Combiner* combiner = createCombiner(json.at(json_param_name::alg::combiner));
+                        return static_cast<Algorithm*>(new QPAlgorithm(std::shared_ptr<pl::Combiner>(combiner)));
+                    }
+            },
+            {
+                    "Quadrangle",
+                    [](nlohmann::json& json) {
+                        pl::Combiner* combiner = createCombiner(json.at(json_param_name::alg::combiner));
+                        return static_cast<Algorithm*>(new QuadAlgorithm(std::shared_ptr<pl::Combiner>(combiner)));
+                    }
+            },
+            {
+                    "ElderMead",
+                    [](nlohmann::json& json) {
+                        auto algorithm = new ElderMeadAlgorithm({0, 0, 0});
+                        if (json.contains(json_param_name::alg::step)) {
+                            algorithm->step = json.at(json_param_name::alg::step).get<double>();
+                        }
+                        if (json.contains(json_param_name::alg::numberIteration)) {
+                            algorithm->numberIteration = json.at(json_param_name::alg::numberIteration).get<unsigned>();
+                        }
+                        if (json.contains(json_param_name::alg::alpha)) {
+                            algorithm->alpha = json.at(json_param_name::alg::alpha).get<double>();
+                        }
+                        if (json.contains(json_param_name::alg::gamma)) {
+                            algorithm->gamma = json.at(json_param_name::alg::gamma).get<double>();
+                        }
+                        if (json.contains(json_param_name::alg::rho)) {
+                            algorithm->rho = json.at(json_param_name::alg::rho).get<double>();
+                        }
+                        if (json.contains(json_param_name::alg::sigma)) {
+                            algorithm->sigma = json.at(json_param_name::alg::sigma).get<double>();
+                        }
+                        return static_cast<Algorithm*>(algorithm);
+                    }
+            }
+    };
+
+    auto it = algorithmsFactory.find(json.at(json_param_name::alg::name).get<std::string>());
+    if (it == algorithmsFactory.end()) {
+        throw std::invalid_argument("Wrong algorithm!");
+    }
+    return it->second(json);
 }
 
 class CoordinateNamesVisitor: public Scene::Visitor {
@@ -262,11 +306,7 @@ Experimenter createExperimenterFromJSON(const std::string& fileName) {
         );
 
         experimenter.algorithm = std::unique_ptr<Algorithm>(
-                createAlgorithm(json.at(json_param_name::experiment::algoType))
-        );
-
-        experimenter.combiner = std::unique_ptr<Combiner>(
-                createCombiner(json.at(json_param_name::experiment::combinerType))
+                createAlgorithm(json.at(json_param_name::experiment::algorithm))
         );
 
     } catch (std::exception& exc) {
