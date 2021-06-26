@@ -161,8 +161,10 @@ std::optional<TimePoint<>> commonLocalizationByElderMeadMethod(const std::vector
                                rho,
                                sigma);
 
-    if (result[2] < 0) {
-        return std::nullopt;
+    for (const auto& i: data) {
+        if (result[2] > i.time) {
+            return std::nullopt;
+        }
     }
 
     return T(result[0], result[1], result[2]);
