@@ -12,7 +12,7 @@
 /** Parameters names */
 namespace json_param_name {
     namespace experiment {
-        const std::string scenes = "scenes";
+        const std::string scene = "scene";
         const std::string grid = "grid";
         const std::string gridWidth = "width";
         const std::string gridHeight = "height";
@@ -283,7 +283,7 @@ Experimenter createExperimenterFromJSON(const std::string& fileName) {
     Experimenter experimenter;
 
     try {
-        experimenter.scene = std::unique_ptr<Scene>(createSceneFromJSON(json.at(json_param_name::experiment::scenes)));
+        experimenter.scene = std::unique_ptr<Scene>(createSceneFromJSON(json.at(json_param_name::experiment::scene)));
 
         if (json.contains(json_param_name::experiment::grid)) {
             auto jsonGrid = json.at(json_param_name::experiment::grid);

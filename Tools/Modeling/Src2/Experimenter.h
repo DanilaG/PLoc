@@ -82,9 +82,26 @@ private:
 
     class CoordinateNamesVisitor: public Scene::Visitor {
     public:
-        void onPlain(SceneOnPlain* scene) final { names = "x, y, time"; }
+        void onPlain(SceneOnPlain* scene) final {
+            auto spatialNames = SpatialCoordinateNamesVisitor();
+            spatialNames.onPlain(scene);
+            names = spatialNames.names + ", \"time\"";
+        }
 
-        void onSphere(SceneOnSphere* scene) final { names = "latitude, longitude, time"; }
+        void onSphere(SceneOnSphere* scene) final {
+            auto spatialNames = SpatialCoordinateNamesVisitor();
+            spatialNames.onSphere(scene);
+            names = spatialNames.names + ", \"time\"";
+        }
+
+        std::string names;
+    };
+
+    class SpatialCoordinateNamesVisitor: public Scene::Visitor {
+    public:
+        void onPlain(SceneOnPlain* scene) final { names = "\"x\", \"y\""; }
+
+        void onSphere(SceneOnSphere* scene) final { names = "\"latitude\", \"longitude\""; }
 
         std::string names;
     };

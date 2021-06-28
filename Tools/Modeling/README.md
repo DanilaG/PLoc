@@ -21,39 +21,39 @@ or:
 Experiments described in JSON format. In description use the next types:
 
 ### Point
-Position of something. Contains scenes:
+Position of something. Contains scene:
 * `x` (_double_) - first coordinate of a point;
 * `y` (_double_) - second coordinate of a point.
 
 ### Bound
-Bound of a area. Contains scenes:
+Bound of a area. Contains scene:
 * `min` (_Point_) - minimal values of coordinates in a scene;
 * `max` (_Point_) - maximal values of coordinates in a scene;
 
 ### Scene
-Describes a scene for experiment. Contains scenes:
+Describes a scene for experiment. Contains scene:
 * `bound` (_Bound_) - bound of a area under consideration;
 * `c` (_double_) - signal propagation speed;
 * `detectors` (_[Points]_) - array of detectors position.
 
 ### Grid
-Contains scenes:
+Contains scene:
 * `width` (_int_) - width a grid;
 * `height` (_int_) - height a grid.
 
 ### ErrorGenerator
-Describes random error generator. Contains scenes:
+Describes random error generator. Contains scene:
 * `type` - type of generator. Can take the following values:
     * `Linear` - for generator with linear distribution;
     * `Normal` - for generator with normal distribution;
 * `relative_errors` - true, if errors depend on value. In other words, if it is true value with error equal _value * (1 + error_), else _value + error_;
 * Fields describing the generator.
     
-#### LinearErrorGenerator scenes
+#### LinearErrorGenerator scene
 * `min_value` (_double_) - low generator border;
 * `max_value` (_double_) - upper generator border.
 
-#### NormalErrorGenerator scenes
+#### NormalErrorGenerator scene
 * `mean` (_double_) - mean of normal distribution;
 * `standard_deviation` (_double_) - standard deviation of normal distribution.
 
@@ -64,8 +64,8 @@ Describes localization algorithm type. Can contain next values: `"Direct"`, `"Qu
 Describes algorithm of combiner results. Can contain next values: `"Mean"`.
 
 ### Experiment description
-Describe an experiment. Path to file with this JSON object must be specified on program start. Contains scenes:
-* `scenes` (_[Scene / String]_) - array of objects describing scenes for an experiment. Can contain Scene or string dates. In string must be specified a path to file with scene structure. 
+Describe an experiment. Path to file with this JSON object must be specified on program start. Contains scene:
+* `scene` (_[Scene / String]_) - array of objects describing scene for an experiment. Can contain Scene or string dates. In string must be specified a path to file with scene structure. 
 * `grid` (_Grid_) - sampling grid of scene;
 * `number_attempts` (_unsigned int_) - number attempts of localization in each node of the grid;
 * `c_error_generator` (_ErrorGenerator_) - generator errors in wave propagation speed;
@@ -74,7 +74,7 @@ Describe an experiment. Path to file with this JSON object must be specified on 
 * `combiner` (_CombinerType_) - combiner results algorithm type.
 
 ## Output
-The program generate reports in out put directory. If an input experiment description has more the one scene, all reports will be separated into subdirectories by scenes, where the number directory corresponds to a scene number in the input array.
+The program generate reports in out put directory. If an input experiment description has more the one scene, all reports will be separated into subdirectories by scene, where the number directory corresponds to a scene number in the input array.
 Output report for each scene may contain files:
 * `TextReport.txt` - text description some experiment parameters with some result statistics;
 * `Detextord.dat` - description position of detectors according to [format requirement](http://grapherhelp.goldensoftware.com/WTOPICS/TOP_ASCIIFILES.htm);

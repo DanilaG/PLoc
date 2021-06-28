@@ -153,7 +153,7 @@ void Experimenter::saveSignalsResults(const std::vector<Scene::PositionWithTime>
 }
 
 void Experimenter::saveInSignals() {
-    save({signal.value()}, "Signals.dat");
+    save({signal.value()}, "Signal.dat");
 }
 
 void Experimenter::saveDetectors() {
@@ -167,7 +167,7 @@ void Experimenter::save(const std::vector<Scene::Position>& data, const std::str
         throw std::invalid_argument("Can't open " + outFileFullName + ".");
     }
 
-    CoordinateNamesVisitor coordinateNamesVisitor;
+    SpatialCoordinateNamesVisitor coordinateNamesVisitor;
     scene->accept(&coordinateNamesVisitor);
     file << coordinateNamesVisitor.names << std::endl;
 
