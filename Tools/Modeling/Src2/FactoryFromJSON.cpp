@@ -31,7 +31,8 @@ namespace json_param_name {
         const std::string gamma = "gamma";
         const std::string rho = "rho";
         const std::string sigma = "sigma";
-        const std::string numberIteration = "numberIteration";
+        const std::string numberIteration = "number_iteration";
+        const std::string algorithm = "algorithm";
     }
 
     namespace error_gen {
@@ -216,7 +217,11 @@ Algorithm* createAlgorithm(nlohmann::json& json) {
             {
                     "ElderMead",
                     [](nlohmann::json& json) {
-                        auto algorithm = new ElderMeadAlgorithm({0, 0, 0});
+                        auto algorithm = new ElderMeadAlgorithm();
+                        if (json.contains(json_param_name::alg::algorithm)) {
+                            algorithm->startPointAlgorithm =
+                                    std::unique_ptr<Algorithm>(createAlgorithm(json.at(json_param_name::alg::algorithm)));
+                        }
                         if (json.contains(json_param_name::alg::step)) {
                             algorithm->step = json.at(json_param_name::alg::step).get<double>();
                         }

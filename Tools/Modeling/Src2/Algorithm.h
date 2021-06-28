@@ -54,9 +54,16 @@ public:
 
 class ElderMeadAlgorithm: public Algorithm {
 public:
-    ElderMeadAlgorithm(const pl::TimePoint<>& start): start(start) {}
+    ElderMeadAlgorithm() {}
 
     std::optional<pl::TimePoint<>> calculateFor(const std::vector<pl::TimePoint<>>& detectors,  double c) final {
+        pl::TimePoint<> start {0, 0, 0};
+        if (startPointAlgorithm != nullptr) {
+            auto result = startPointAlgorithm->calculateFor(detectors, c);
+            if (result.has_value()) {
+                start = result.value();
+            }
+        }
         return pl::localizationByElderMeadMethod(detectors,
                                                  c,
                                                  start,
@@ -68,7 +75,7 @@ public:
                                                  sigma);
     }
 
-    pl::TimePoint<> start {0,0, 0};
+    std::unique_ptr<Algorithm> startPointAlgorithm = nullptr;
     unsigned int numberIteration = 1000;
     double step = 0.1;
     double alpha = 1;
