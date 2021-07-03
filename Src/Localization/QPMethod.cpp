@@ -7,7 +7,7 @@ std::optional<TimePoint<>> localizationByQPMethod(const TimePoint<>& p0,
                                                   TimePoint<> p1,
                                                   TimePoint<> p2,
                                                   double c) {
-    /* Local vars names according to the formula in the documentation. */
+    /* Local vars were named according to the formulas in the documentation. */
     p1 = p1 - p0;
     p2 = p2 - p0;
     const unsigned int numberPoints = 3;

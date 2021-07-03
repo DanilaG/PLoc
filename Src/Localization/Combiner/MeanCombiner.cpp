@@ -22,4 +22,5 @@ void MeanCombiner::MeanDataCombiner::reset() {
     mean_ = 0;
     counter_ = 0;
 }
+
 }

@@ -62,6 +62,7 @@ protected:
 template<int N>
 ElderMeadPoint<N> elderMead(std::function<double (const ElderMeadPoint<N>&)> f,
                             const ElderMeadPoint<N>& start,
+                            std::pair<double, unsigned int> breakParameters,
                             unsigned int maxIter,
                             double step,
                             double alpha = 1,
@@ -77,11 +78,23 @@ ElderMeadPoint<N> elderMead(std::function<double (const ElderMeadPoint<N>&)> f,
         points[i].second = f(points[i].first);
     }
 
+    double lastBest = points[0].second;
+    unsigned int iterationWithoutImprove = 0;
+
     for (unsigned int i = 0; i < maxIter; i++) {
         std::sort(points.begin(),
                   points.end(),
                   [](std::pair<ElderMeadPoint<N>, double>& a,
                      std::pair<ElderMeadPoint<N>, double>& b){ return a.second < b.second; });
+
+        if (abs(points[0].second) < abs(lastBest - breakParameters.first)) {
+            iterationWithoutImprove = 0;
+            lastBest = points[0].second;
+        } else {
+            if ((++iterationWithoutImprove) >= breakParameters.second) {
+                return points[0].first;
+            }
+        }
 
         ElderMeadPoint<N> x0;
         for (unsigned int j = 0; j < N; j++) {
@@ -130,14 +143,15 @@ ElderMeadPoint<N> toElderMeadPoint(const TimePoint<>& p) {
 
 template<typename T>
 std::optional<TimePoint<>> commonLocalizationByElderMeadMethod(const std::vector<T>& data,
-                                                      double c,
-                                                      const T& start,
-                                                      unsigned int numberIteration,
-                                                      double step,
-                                                      double alpha,
-                                                      double gamma,
-                                                      double rho,
-                                                      double sigma) {
+                                                               double c,
+                                                               const T& start,
+                                                               std::pair<double, unsigned int> breakParameters,
+                                                               unsigned int maxNumberIteration,
+                                                               double step,
+                                                               double alpha,
+                                                               double gamma,
+                                                               double rho,
+                                                               double sigma) {
     const int N = 3;
 
     auto func = [c, &data](const ElderMeadPoint<3>& p) {
@@ -154,7 +168,8 @@ std::optional<TimePoint<>> commonLocalizationByElderMeadMethod(const std::vector
 
     auto result = elderMead<N>(func,
                                toElderMeadPoint<N>(start),
-                               numberIteration,
+                               breakParameters,
+                               maxNumberIteration,
                                step,
                                alpha,
                                gamma,
@@ -173,7 +188,8 @@ std::optional<TimePoint<>> commonLocalizationByElderMeadMethod(const std::vector
 std::optional<TimePoint<>> localizationByElderMeadMethod(const std::vector<TimePoint<>>& data,
                                                          double c,
                                                          const TimePoint<>& start,
-                                                         unsigned int numberIteration,
+                                                         unsigned int maxNumberIteration,
+                                                         std::pair<double, unsigned int> breakParameters,
                                                          double step,
                                                          double alpha,
                                                          double gamma,
@@ -182,11 +198,13 @@ std::optional<TimePoint<>> localizationByElderMeadMethod(const std::vector<TimeP
     return commonLocalizationByElderMeadMethod<TimePoint<>>(data,
                                                             c,
                                                             start,
-                                                            numberIteration,
+                                                            breakParameters,
+                                                            maxNumberIteration,
                                                             step,
                                                             alpha,
                                                             gamma,
                                                             rho,
                                                             sigma);
 }
+
 }

@@ -21,4 +21,5 @@ std::optional<double> MedianCombiner::MedianDataCombiner::get() {
 void MedianCombiner::MedianDataCombiner::reset() {
     data_ = std::vector<double>();
 }
+
 }

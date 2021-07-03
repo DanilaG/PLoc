@@ -4,7 +4,7 @@
 
 namespace pl {
 std::optional<TimePoint<>> localizationByDirectMethod(const TimePoint<>& p0, TimePoint<> p1, TimePoint<> p2, double c) {
-    /* Local vars names according to the formula in the documentation. */
+    /* Local vars were named according to the formulas in the documentation. */
     p1.x = p1.x - p0.x;
     p1.y = p1.y - p0.y;
     p2.x = p2.x - p0.x;

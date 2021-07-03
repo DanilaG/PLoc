@@ -4,6 +4,7 @@
 #include "ParallelCombiner.h"
 
 namespace pl {
+/** Calculates mean value. */
 class MeanCombiner: public ParallelCombiner {
 public:
     MeanCombiner(): ParallelCombiner(std::make_shared<MeanDataCombiner>(),

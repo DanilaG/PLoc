@@ -6,6 +6,7 @@
 #include <vector>
 
 namespace pl {
+/** Calculates median value. */
 class MedianCombiner: public ParallelCombiner {
 public:
     MedianCombiner(): ParallelCombiner(std::make_shared<MedianDataCombiner>(),
@@ -28,6 +29,7 @@ protected:
         std::vector<double> data_;
     };
 };
+
 }
 
 #endif //PLOC_MEDIANCOMBINER_H
