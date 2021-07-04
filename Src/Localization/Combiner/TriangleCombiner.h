@@ -8,6 +8,7 @@
 
 namespace pl {
 class TriangleCombiner: public MassCombiner {
+/** Gives priority to more regular triangles. */
 protected:
     double getMass(const TimePoint<>& answer, const std::vector<TimePoint<>>& locators) final;
 };

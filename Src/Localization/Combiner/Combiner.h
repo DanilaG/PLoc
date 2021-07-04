@@ -10,10 +10,21 @@ namespace pl {
 /** Class for combining localization results */
 class Combiner {
 public:
-    /** Add new answer from locators */
+    /**
+     * Add new answer from locators
+     *
+     * @param new answer;
+     * @param vector of locators by witch the answer was gotten.
+     */
     virtual void add(const TimePoint<>& answer, const std::vector<TimePoint<>>& locators) = 0;
-    /** Count result of combining */
+
+    /**
+     * Count result of combining
+     *
+     * @return result of combining all added answers.
+     */
     virtual std::optional<TimePoint<>> result() = 0;
+
     /** Reset class */
     virtual void reset() {};
 

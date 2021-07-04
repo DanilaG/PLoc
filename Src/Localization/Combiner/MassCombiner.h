@@ -7,6 +7,7 @@
 #include <vector>
 
 namespace pl {
+/** Combines result by the mass */
 class MassCombiner : public Combiner {
 public:
     void add(const TimePoint<>& answer, const std::vector<TimePoint<>>& locators) final;
@@ -16,6 +17,14 @@ public:
     virtual ~MassCombiner() {}
 
 protected:
+    /**
+     * Calculate mass the answer.
+     *
+     * @param answer;
+     * @param vector of locators by witch the answer was gotten.
+     *
+     * @return mass of the answer.
+     */
     virtual double getMass(const TimePoint<>& answer, const std::vector<TimePoint<>>& locators) = 0;
 
 private:

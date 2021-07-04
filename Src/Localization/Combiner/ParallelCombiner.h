@@ -6,18 +6,32 @@
 #include <memory>
 
 namespace pl {
-/** Interface a combiner with independent coordinates */
+/** Protocol a combiner with independent coordinates. */
 class ParallelCombiner: public Combiner {
 public:
-    /** Protocol for single coordinate combiner */
+    /** Protocol for single coordinate combiner. */
     class DataCombiner {
     public:
-        /** Add new value */
+        /**
+         * Add new value.
+         *
+         * @param new value.
+         */
         virtual void add(double) = 0;
-        /** Get result */
+
+        /**
+         * Get result.
+         *
+         * @return result of combining.
+         */
         virtual std::optional<double> get() = 0;
-        /** True, if combiner has result value */
+
+        /**
+         *
+         * @return true if combiner has number value.
+         */
         virtual bool hasValue() = 0;
+
         /** Reset combiner */
         virtual void reset() = 0;
 
@@ -43,6 +57,7 @@ private:
     std::shared_ptr<ParallelCombiner::DataCombiner> y_ = nullptr;
     std::shared_ptr<ParallelCombiner::DataCombiner> time_ = nullptr;
 };
+
 }
 
 #endif //PLOC_PARALLELCOMBINER_H

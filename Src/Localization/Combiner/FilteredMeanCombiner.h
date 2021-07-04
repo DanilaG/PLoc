@@ -6,6 +6,7 @@
 #include <vector>
 
 namespace pl {
+/** Discarding extra values and calculate mean of others. */
 class FilteredMeanCombiner: public ParallelCombiner {
 public:
     FilteredMeanCombiner(): ParallelCombiner(std::make_shared<FilteredMeanDataCombiner>(),
@@ -25,12 +26,14 @@ protected:
 
         ~FilteredMeanDataCombiner() {}
 
-        const double left_percent_border = 0.1;
-        const double right_percent_border = 0.1;
+        const double leftPercentBorderOfDiscarding = 0.1;
+        const double rightPercentBorderOfDiscarding = 0.1;
+        
     private:
         std::vector<double> data_;
     };
 };
+
 }
 
 

@@ -9,4 +9,5 @@ double TimeSumCombiner::getMass(const TimePoint<>& answer, const std::vector<Tim
     mass = mass * mass * mass * mass * mass * mass * mass * mass * mass * mass;
     return 1 / (mass + 1);
 }
+
 }
