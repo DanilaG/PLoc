@@ -68,6 +68,7 @@ public:
                                                  c,
                                                  start,
                                                  numberIteration,
+                                                 {1e-16, 50},
                                                  step,
                                                  alpha,
                                                  gamma,
