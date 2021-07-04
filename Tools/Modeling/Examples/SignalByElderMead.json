@@ -1,0 +1,34 @@
+{
+  "scene":
+  {
+    "restrictions": {
+      "min": {
+        "x": -50,
+        "y": -50
+      },
+      "max": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    "c": 0.299675,
+    "detectors": [
+      { "x": -30, "y": -30 },
+      { "x": 30, "y": -30 },
+      { "x": 30, "y": 30 }
+    ]
+  },
+  "number_attempts": 1500,
+  "signal":
+  { "x": -15, "y": -40 },
+  "c_error_generator": { "type": "Normal", "relative_errors": false, "mean": 0, "standard_deviation": 0.0000151989 },
+  "time_error_generator": { "type": "Normal", "relative_errors": false, "mean": 0, "standard_deviation": 0.255106 },
+  "algorithm": {
+    "name": "ElderMead",
+    "algorithm": {
+      "name": "QP",
+      "combiner": "Median"
+    },
+    "number_iteration": 1000
+  }
+}

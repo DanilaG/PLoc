@@ -1,19 +1,18 @@
-project(PLoc_Modeling2)
+project(PLoc_Modeling)
 
 set(HEADERS
-        Src2/Algorithm.h
-        Src2/Combiner.h
-        Src2/ErrorGenerator.h
-        Src2/Experimenter.h
-        Src2/FactoryFromJSON.h
-        Src2/Scene.h
+        Src/Algorithm.h
+        Src/ErrorGenerator.h
+        Src/Experimenter.h
+        Src/FactoryFromJSON.h
+        Src/Scene.h
         )
 
 set(EXECUTABLE
         main.cpp
-        Src2/ErrorGenerator.cpp
-        Src2/Experimenter.cpp
-        Src2/FactoryFromJSON.cpp
+        Src/ErrorGenerator.cpp
+        Src/Experimenter.cpp
+        Src/FactoryFromJSON.cpp
         )
 
 FetchContent_Declare(

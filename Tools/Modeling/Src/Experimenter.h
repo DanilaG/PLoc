@@ -8,7 +8,6 @@
 #include <vector>
 
 #include "Algorithm.h"
-#include "Combiner.h"
 #include "ErrorGenerator.h"
 #include "Scene.h"
 

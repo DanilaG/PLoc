@@ -1,0 +1,29 @@
+{
+  "scene":
+  {
+    "restrictions": {
+      "min": {
+        "x": -50,
+        "y": -50
+      },
+      "max": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    "c": 0.299675,
+    "detectors": [
+      { "x": -30, "y": -30 },
+      { "x": 30, "y": -30 },
+      { "x": 30, "y": 30 }
+    ]
+  },
+  "grid": { "width": 50, "height": 50 },
+  "number_attempts": 7500,
+  "c_error_generator": { "type": "Normal", "relative_errors": false, "mean": 0, "standard_deviation": 0.0000151989 },
+  "time_error_generator": { "type": "Normal", "relative_errors": false, "mean": 0, "standard_deviation": 0.255106 },
+  "algorithm": {
+    "name": "QP",
+    "combiner": "Median"
+  }
+}
