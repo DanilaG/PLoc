@@ -55,12 +55,6 @@ TEST(DIRECT_DETECT, BEHIND_DETECTOR) {
                                                           2),
                            std::nullopt)
 }
-TEST(DIRECT_DETECT, BEHIND_DETECTOR){LOCALIZATION_RESULT_EQ(
-            pl::localizationByDirectMethod(
-                    {{-1, 0, 5.061552812808831},
-                     {1,  0, 5.061552812808831},
-                     {0,  2, 4}}, 2),
-            std::nullopt)}
 
 TEST(DIRECT_DETECT, FOUR_DETECTORS) {
     LOCALIZATION_RESULT_EQ(pl::localizationByDirectMethod({{-1, 0, 5.061552812808831},
@@ -117,12 +111,6 @@ TEST(QP_DETECT, BEHIND_DETECTOR) {
                                                       2),
                            std::nullopt)
 }
-TEST(QP_DETECT, BEHIND_DETECTOR){LOCALIZATION_RESULT_EQ(
-            pl::localizationByQPMethod(
-                    {{-1, 0, 5.061552812808831},
-                     {1,  0, 5.061552812808831},
-                     {0,  2, 4}}, 2),
-            std::nullopt)}
 
 TEST(QP_DETECT, FOUR_DETECTORS) {
     LOCALIZATION_RESULT_EQ(pl::localizationByQPMethod({{-1, 0, 5.061552812808831},
