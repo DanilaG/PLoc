@@ -47,6 +47,6 @@ Examples of localization are with added errors.
     <img src="https://i.ibb.co/gmw8QXT/Localization-spread-time.png" width="400"></br>
     Spread of time lighting's appearance with source in the center of the triangle of stations.</br>
     </br>
-    <img src="https://i.ibb.co/kX50fQJ/H.png" width="500"></br>
+    <img src="https://i.ibb.co/hKTFTJn/H.png" width="500"></br>
     Field of mean distance errors. Localization by Elder-Mead on sphere.</br>
 </p>
