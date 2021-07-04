@@ -25,7 +25,11 @@ void Experimenter::conductForGrid() {
 
     for (unsigned int first = 0; first < grid.value().width; first++) {
         for (unsigned int second = 0; second < grid.value().height; second++) {
-            std::cout << "Counted: " << (first * grid.value().height + second) / double(grid.value().width * grid.value().height) * 100.0 << "%" << std::endl;
+            std::cout << "Counted: "
+                      << (first * grid.value().height + second) / double(grid.value().width * grid.value().height)
+                         * 100.0
+                      << "%"
+                      << std::endl;
             Scene::Position signal = {
                     (first + 0.5) * step.first + scene->restrictions.min.first,
                     (second + 0.5) * step.second + scene->restrictions.min.second
