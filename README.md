@@ -30,7 +30,7 @@ In practice, Rectangle method gives the best results with Median combiner. For o
 
 ## Modeling
 PLoc has a program for the modeling localization process. With their help, you can choose the bests position for your detectors and method of localization.
-[Read more about the program.]()
+[Read more about the program.](Tools/Modeling/README.md)
 
 Also, you can use scripts that were written on Python for partly visualization of results. 
 

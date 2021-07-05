@@ -1,40 +1,39 @@
-# How to use the program?
-You can run this program from a terminal with the next input arguments.
+# Modeling program
+The program can make localization experiments using different methods and include time and signal speed errors.
+It was created for the opportunity to choose the best localization method for a user.
+
 ## Input arguments:
-* `experiment` (short name: `e`, required) - path to JSON file with experiment description;
-* `out` (short name: `o`, default: `""`) - output directory path;
-* `time` (short name: `t`, default: `false`) - flag for analysis time errors in an experiment;
-* `distance` (short name: `d`, default: `false`) - flag for analysis distance errors in an experiment;
-* `text_report` (short name: `r`, default: `false`) - flag for creation text description of an experiment;
+* `input` (short name: `i`, required) - path to JSON file with experiment description;
+* `output` (short name: `o`, required) - output directory path;
 * `help` (short name: `h`, default: `false`) - return help message.
 
-Arguments `experiment` and `out` have an implicit setting if placed they value at a first and second position of arguments.
-## Example start commands:  
-Next command conducts an experiment described in `"expirement.json"` file, save result, describing distance errors, and text report in `"out"` directory.  
-`PLoc_Modeling --experiment="expirement.json" --out="out" --distance --text_report`  
-It same with:  
-`PLoc_Modeling "expirement.json" "out" -d -r`  
-or:  
-`PLoc_Modeling "expirement.json" "out" -dr`
-
 ## Experiment description format:
-Experiments described in JSON format. In description use the next types:
+Experiment describes in JSON format, in which use the next types:
 
 ### Point
-Position of something. Contains scene:
+Position of something. In a plane case contains scene:
 * `x` (_double_) - first coordinate of a point;
 * `y` (_double_) - second coordinate of a point.
 
-### Bound
+
+In a spherical case:
+* `latitude` (_double_) - first coordinate of a point;
+* `longitude` (_double_) - second coordinate of a point.
+
+### Restrictions
 Bound of a area. Contains scene:
 * `min` (_Point_) - minimal values of coordinates in a scene;
 * `max` (_Point_) - maximal values of coordinates in a scene;
 
 ### Scene
 Describes a scene for experiment. Contains scene:
-* `bound` (_Bound_) - bound of a area under consideration;
+* `restrictions` (_Restrictions_) - bound of a area under consideration;
 * `c` (_double_) - signal propagation speed;
 * `detectors` (_[Points]_) - array of detectors position.
+
+In a spherical case it also includes:
+* `radius` (_double_) - radius of the sphere;
+* `projection` (_string_) - describe projection for map. Possible values: `Sinusoidal`, `Equirectangular`.
 
 ### Grid
 Contains scene:
@@ -42,43 +41,47 @@ Contains scene:
 * `height` (_int_) - height a grid.
 
 ### ErrorGenerator
-Describes random error generator. Contains scene:
-* `type` - type of generator. Can take the following values:
-    * `Linear` - for generator with linear distribution;
-    * `Normal` - for generator with normal distribution;
-* `relative_errors` - true, if errors depend on value. In other words, if it is true value with error equal _value * (1 + error_), else _value + error_;
-* Fields describing the generator.
-    
-#### LinearErrorGenerator scene
-* `min_value` (_double_) - low generator border;
-* `max_value` (_double_) - upper generator border.
+Describes random error generator. 
+In linear distribution case contains scene:
+* `min_value` (_double_) - minimum value of the error;
+* `max_value` (_double_) - maximum value of the error;
 
-#### NormalErrorGenerator scene
+In normal distribution case contains scene:
 * `mean` (_double_) - mean of normal distribution;
 * `standard_deviation` (_double_) - standard deviation of normal distribution.
 
-### AlgorithmType
-Describes localization algorithm type. Can contain next values: `"Direct"`, `"Quadrangle"`, `"Vector"`.
+### Algorithm
+Describes algorithm of localization. Contains scene:
+* `name` (_string_) - name the algorithm, possible values: `Direct`, `QP`, `Quadrangle`, `ElderMead`.
 
-### CombinerType
-Describes algorithm of combiner results. Can contain next values: `"Mean"`.
+If you use `ElderMead` you must add scene:
+* `combiner` (_string_) - name of the result combiner, possible values: `Mean`, `FilteredMean`, `Median`, `Triangle`, `TimeSum`;
+
+If you use `ElderMead` you may add scene:
+* `algorithm` (_Algorithm_) - algorithm for generation start point. If the field is empty, start point always equals (0, 0);
+* `number_iteration` (_int_) - maximum step number;
+* `step` (_double_) - step for generation neighborhood points from the start point;
+* `alpha` (_double_) - [Elder-Mead](https://en.wikipedia.org/wiki/Nelder–Mead_method) method parameter;
+* `gamma` (_double_) - [Elder-Mead](https://en.wikipedia.org/wiki/Nelder–Mead_method) method parameter;
+* `rho` (_double_) - [Elder-Mead](https://en.wikipedia.org/wiki/Nelder–Mead_method) method parameter;
+* `sigma` (_double_) - [Elder-Mead](https://en.wikipedia.org/wiki/Nelder–Mead_method) method parameter;
 
 ### Experiment description
 Describe an experiment. Path to file with this JSON object must be specified on program start. Contains scene:
-* `scene` (_[Scene / String]_) - array of objects describing scene for an experiment. Can contain Scene or string dates. In string must be specified a path to file with scene structure. 
-* `grid` (_Grid_) - sampling grid of scene;
-* `number_attempts` (_unsigned int_) - number attempts of localization in each node of the grid;
+* `scene` (_Scene_) - scene;
+* `number_attempts` (_unsigned int_) - number attempts of localization each lightning;
+* `signal` (_Point_) - position source signal;  
+* `grid` (_Grid_) - grid for errors fields;
 * `c_error_generator` (_ErrorGenerator_) - generator errors in wave propagation speed;
 * `time_error_generator` (_ErrorGenerator_) - generator errors in time detection;
 * `algorithm` (_AlgorithmType_) - localization algorithm type;
-* `combiner` (_CombinerType_) - combiner results algorithm type.
 
 ## Output
-The program generate reports in out put directory. If an input experiment description has more the one scene, all reports will be separated into subdirectories by scene, where the number directory corresponds to a scene number in the input array.
+The program generate reports in out put directory.
 Output report for each scene may contain files:
-* `TextReport.txt` - text description some experiment parameters with some result statistics;
-* `Detextord.dat` - description position of detectors according to [format requirement](http://grapherhelp.goldensoftware.com/WTOPICS/TOP_ASCIIFILES.htm);
+* `Detectors.dat` - description position of detectors according to [format requirement](http://grapherhelp.goldensoftware.com/WTOPICS/TOP_ASCIIFILES.htm);
 * `Distance.grd` - description errors in distance in signal localization on the scene according to [format requirement](http://grapherhelp.goldensoftware.com/subsys/ascii_grid_file_format.htm);
-* `Time.grd` - description errors in time in signal localization on the scene according to [format requirement](http://grapherhelp.goldensoftware.com/subsys/ascii_grid_file_format.htm).
+* `Time.grd` - description errors in time in signal localization on the scene according to [format requirement](http://grapherhelp.goldensoftware.com/subsys/ascii_grid_file_format.htm);
+* `LocalizedSignals.dat` - description attempts of localization the signal according to [format requirement](http://grapherhelp.goldensoftware.com/WTOPICS/TOP_ASCIIFILES.htm).
 
 All formats were chosen for possibility to visualisation data in [Surfer®](https://www.goldensoftware.com/products/surfer).
